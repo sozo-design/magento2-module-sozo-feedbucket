@@ -16,13 +16,16 @@
  */
 
 /** @var Sozo\Feedbucket\Block\System\Config\Form\Fieldset\Hint $block */
+/** @var $escaper \Magento\Framework\Escaper */
 ?>
 <div id="sozo-container">
     <img src='<?=$block->escapeUrl($block->getViewFileUrl('Sozo_Core::images/sozo_magento_plugin_about.png')) ?>'
          alt="sozo image icon">
     <div>
         <p>
-            <strong><?= $block->escapeHtml(__('SOZO Design')) ?></strong>
+            <strong><?= $escaper->escapeHtml(__(sprintf('SOZO Design Feedbucket version %s', $block->getVersion()))); ?></strong>
+            <br>
+            <strong><?= $escaper->escapeHtml(__('Output the Feedbucket code on your Magento Website')); ?></strong>
         </p>
         <p>
             <?= $block->escapeHtml(__('Website'))?>:
