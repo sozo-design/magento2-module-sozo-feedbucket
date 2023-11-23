@@ -60,11 +60,11 @@ class Hint extends Template implements RendererInterface
      * @param array $data
      */
     public function __construct(
-        Context                  $context,
+        Context $context,
         ProductMetadataInterface $productMetaData,
-        Loader                   $loader,
-        ConfigProvider           $configProvider,
-        array                    $data = []
+        Loader $loader,
+        ConfigProvider $configProvider,
+        array $data = []
     ) {
         parent::__construct($context, $data);
         $this->metaData = $productMetaData;
