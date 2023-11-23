@@ -20,31 +20,28 @@
     <policies>
         <policy id="script-src">
             <values>
-                <value id="sozo-feedbucket-widget" type="host">widget.usersnap.com</value>
-                <value id="sozo-feedbucket-resources" type="host">resources.usersnap.com</value>
+                <value id="sozo-feedbucket-widget" type="host">cdn.feedbucket.app</value>
             </values>
         </policy>
         <policy id="style-src">
             <values>
-                <!--GoogleFonts-->
-                <value id="sozo-feedbucket-googlefonts" type="host">https://fonts.googleapis.com</value>
-            </values>
-        </policy>
-        <policy id="font-src">
-            <values>
-                <value id="cw-usersnao-googlefonts" type="host">https://fonts.gstatic.com</value>
+                <value id="sozo-feedbucket" type="host">https://cdn.feedbucket.app</value>
             </values>
         </policy>
         <policy id="connect-src">
             <values>
-                <value id="sozo-feedbucket-widget" type="host">widget.usersnap.com</value>
-
-                <value id="sozo-feedbucket-aws" type="host">*.amazonaws.com</value>
+                <value id="sozo-feedbucket-dashboard" type="host">dashboard.feedbucket.app</value>
+                <value id="sozo-feedbucket-cdn" type="host">cdn.feedbucket.app</value>
             </values>
         </policy>
         <policy id="img-src">
             <values>
-                <value id="sozo-feedbucket-gravatar" type="host">www.gravatar.com</value>
+                <value id="sozo-feedbucket" type="host">https://dashboard.feedbucket.app</value>
+            </values>
+        </policy>
+        <policy id="media-src">
+            <values>
+                <value id="sozo-feedbucket" type="host">blob:</value>
             </values>
         </policy>
     </policies>

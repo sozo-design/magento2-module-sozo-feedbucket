@@ -21,9 +21,7 @@
 ?>
 <!-- BEGIN FEEDBUCKET CODE {literal} -->
 <script>
-    window.feedbucketConfig = {
-        <?= $block->getJsConfig()?>
-    }
+    window.feedbucketConfig = <?= $block->getJsConfig()?>
 </script>
 <script type="text/javascript">
     (function(k) {

@@ -17,14 +17,22 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
     <menu>
+        <!-- SOZO Core Module Menu Additions -->
+        <!-- sortOrder 0605, F and E are letters 6 and 5 in the alphabet-->
         <add module="Sozo_Feedbucket"
              title="Feedbucket"
-             id="Sozo_Feedbucket::config"
-             resource="Sozo_Feedbucket::config"
-             parent="Magento_Backend::system_other_settings"
              translate="title"
+             id="Sozo_Feedbucket::core_feedbucket"
+             resource="Sozo_Feedbucket::config"
+             parent="Sozo_Core::sozo_menu"
+             sortOrder="0605"/>
+        <add module="Sozo_Feedbucket"
+             title="Configuration"
+             translate="title"
+             id="Sozo_Feedbucket::core_feedbucket_config"
+             resource="Sozo_Feedbucket::config"
              action="admin/system_config/edit/section/sozo_feedbucket"
-             dependsOnModule="Sozo_Feedbucket"
-             sortOrder="40"/>
+             parent="Sozo_Feedbucket::core_feedbucket"
+             sortOrder="10"/>
     </menu>
 </config>

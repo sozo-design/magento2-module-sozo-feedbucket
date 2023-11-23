@@ -21,7 +21,7 @@
             <block class="Sozo\Feedbucket\Block\Backend"
                    name="feedbucket_js"
                    as="feedbucket_js"
-                   template="Sozo_Feedbucket::snap/widget.phtml"/>
+                   template="Sozo_Feedbucket::widget.phtml"/>
         </referenceContainer>
     </body>
 </page>

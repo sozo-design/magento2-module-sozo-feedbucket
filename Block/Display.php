@@ -84,14 +84,7 @@ class Display extends Template
      */
     public function prepareConfig(): array
     {
-        $config = [
-            'custom' => [
-                'capturedBy' => 'Magento 2 Feedbucket Module: ' . $this->configProvider->getExtensionVersion(),
-                'magentoDeployMode' => $this->state->getMode()
-            ]
-        ];
-
-        return $this->jsConfig = $config;
+        return $this->jsConfig = [];
     }
 
     /**
