@@ -1,0 +1,49 @@
+<?php
+/*
+ * SOZO Design Ltd
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the SOZO Proprietary EULA
+ * that is bundled with this package in the file LICENSE.
+ * It is also available through the world-wide-web at this URL:
+ * https://sozodesign.co.uk/legal/magento-license/
+ *
+ * @category    SOZO Design Ltd
+ * @package     Sozo_Core
+ * @copyright   Copyright (c) SOZO Design Ltd (https://sozodesign.co.uk)
+ * @license     https://sozodesign.co.uk/legal/magento-license/  SOZO Proprietary EULA
+ */
+
+/** @var Sozo\Feedbucket\Block\System\Config\Form\Fieldset\Hint $block */
+?>
+<div id="sozo-container">
+    <img src='<?=$block->escapeUrl($block->getViewFileUrl('Sozo_Core::images/sozo_magento_plugin_about.png')) ?>'
+         alt="sozo image icon">
+    <div>
+        <p>
+            <strong><?= $block->escapeHtml(__('SOZO Design')) ?></strong>
+        </p>
+        <p>
+            <?= $block->escapeHtml(__('Website'))?>:
+            <a href="https://sozodesign.co.uk" target="_blank">
+                <?=$block->escapeHtml(__('sozodesign.co.uk'))?>
+            </a><br/>
+            <?= $block->escapeHtml(__('Like, share and follow us on'))?>
+            <a href="https://twitter.com/sozodesign" target="_blank">
+                <?=$block->escapeHtml(__('Twitter'))?>
+            </a>,
+            <a href="https://www.youtube.com/user/SozoDesignLtd" target="_blank">
+                <?= $block->escapeHtml(__('YouTube'))?>
+            </a>,
+            <a href="https://vimeo.com/sozodesign" target="_blank">
+                <?=$block->escapeHtml(__('Vimeo'))?>
+            </a>,
+            <?= $block->escapeHtml(__('and'))?>
+            <a href="http://www.linkedin.com/pub/shaun-uthup/6/785/884" target="_blank">
+                <?=$block->escapeHtml(__('LinkedIn'))?>
+            </a>.
+        </p>
+    </div>
+
+</div>

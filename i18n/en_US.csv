@@ -1,0 +1,22 @@
+"Magento 2 Feedbucket Module","Magento 2 Feedbucket Module"
+v,v
+by,by
+Documentation:,Documentation:
+Feedbucket,Feedbucket
+General,General
+Enabled,Enabled
+"Global API Key","Global API Key"
+"Enter the Global API Key from the Feedbucket control panel.","Enter the Global API Key from the Feedbucket control panel."
+"Project API Key","Project API Key"
+"Deactivate GoogleFonts?","Deactivate GoogleFonts?"
+"Frontend Configuration","Frontend Configuration"
+"Display on Frontend?","Display on Frontend?"
+"Capture User Data?","Capture User Data?"
+"Deactivate Tracking?","Deactivate Tracking?"
+"Deactivate localStorage?","Deactivate localStorage?"
+"Backend Configuration","Backend Configuration"
+"Display on Backend?","Display on Backend?"
+"IP Whitelist","IP Whitelist"
+"Allow output for current IP","Allow output for current IP"
+"Current IP will be added to whitelist","Current IP will be added to whitelist"
+"1 IP address per line","1 IP address per line"

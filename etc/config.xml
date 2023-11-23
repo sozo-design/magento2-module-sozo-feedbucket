@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<!--
+  ~ SOZO Design Ltd
+  ~
+  ~ NOTICE OF LICENSE
+  ~
+  ~ This source file is subject to the Open Software License (OSL 3.0)
+  ~ that is bundled with this package in the file LICENSE.
+  ~ It is also available through the world-wide-web at this URL:
+  ~ http://opensource.org/licenses/osl-3.0.php
+  ~
+  ~ @category    SOZO Design Ltd
+  ~ @package     Sozo_Feedbucket
+  ~ @copyright   Copyright (c) SOZO Design Ltd (https://sozodesign.co.uk)
+  ~ @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
+  -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <sozo_feedbucket>
+            <general>
+                <enabled>0</enabled>
+                <secret></secret>
+            </general>
+            <frontend>
+                <enabled>0</enabled>
+                <capture_user_data>0</capture_user_data>
+            </frontend>
+            <admin>
+                <enabled>0</enabled>
+                <capture_user_data>0</capture_user_data>
+            </admin>
+            <ip_whitelist>
+                <enabled>0</enabled>
+                <whitelist></whitelist>
+            </ip_whitelist>
+        </sozo_feedbucket>
+    </default>
+</config>
