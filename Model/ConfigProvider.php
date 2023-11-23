@@ -27,12 +27,12 @@ class ConfigProvider extends ConfigProviderAbstract
      * xpath prefix of module (section)
      * @var string '{section}/'
      */
-    protected $pathPrefix = 'sozo_feedbucket/';
+    protected string $pathPrefix = 'sozo_feedbucket/';
 
     /**
      * @var string
      */
-    protected $moduleCode = 'Sozo_Feedbucket';
+    protected string $moduleCode = 'Sozo_Feedbucket';
 
     private const CFG_FEEDBUCKET_ENABLED = 'general/enabled';
     private const CFG_FEEDBUCKET_SECRET = 'general/secret';
