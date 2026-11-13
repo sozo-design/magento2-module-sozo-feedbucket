@@ -21,8 +21,8 @@ namespace Sozo\Feedbucket\Block;
 
 use Sozo\Feedbucket\Model\ConfigProvider;
 use Sozo\Feedbucket\Service\IpCheckerService;
+use Sozo\Feedbucket\Service\ReporterToken;
 use Magento\Backend\Model\Auth\Session;
-use Magento\Framework\App\State;
 use Magento\Framework\View\Element\Template\Context;
 
 class Backend extends Display
@@ -36,7 +36,7 @@ class Backend extends Display
      * @param Context $context
      * @param ConfigProvider $configProvider
      * @param IpCheckerService $ipCheckerService
-     * @param State $state
+     * @param ReporterToken $reporterToken
      * @param Session $authSession
      * @param array $data
      */
@@ -44,11 +44,11 @@ class Backend extends Display
         Context $context,
         ConfigProvider $configProvider,
         IpCheckerService $ipCheckerService,
-        State $state,
+        ReporterToken $reporterToken,
         Session $authSession,
         array $data = []
     ) {
-        parent::__construct($context, $configProvider, $ipCheckerService, $state, $data);
+        parent::__construct($context, $configProvider, $ipCheckerService, $reporterToken, $data);
         $this->authSession = $authSession;
     }
 
@@ -76,7 +76,10 @@ class Backend extends Display
                 'email' => $this->getCurrentUser()->getEmail(),
             ];
 
-            $config['reporter']['token'] = $this->configProvider->getUserHash($config['reporter']);
+            $token = $this->reporterToken->forUser(ReporterToken::TYPE_ADMIN, $this->getCurrentUser()->getId());
+            if ($token !== '') {
+                $config['reporter']['token'] = $token;
+            }
         }
 
         return $this->jsConfig = array_merge($this->jsConfig, $config);

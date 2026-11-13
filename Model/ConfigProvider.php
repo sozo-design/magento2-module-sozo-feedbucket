@@ -134,16 +134,4 @@ class ConfigProvider extends ConfigProviderAbstract
     {
         return ($this->getValue(self::CFG_FEEDBUCKET_WHITELIST_WHITELIST, $storeId, ScopeInterface::SCOPE_STORE) ?? '');
     }
-
-    /**
-     * Retrieve the user hash token
-     *
-     * @param array $data
-     * @return string
-     */
-    public function getUserHash(array $data): string
-    {
-        $string = implode('|', $data);
-        return hash_hmac("sha256", $string, $this->getSecret());
-    }
 }

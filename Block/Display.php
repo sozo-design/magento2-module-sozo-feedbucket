@@ -21,7 +21,7 @@ namespace Sozo\Feedbucket\Block;
 
 use Sozo\Feedbucket\Model\ConfigProvider;
 use Sozo\Feedbucket\Service\IpCheckerService;
-use Magento\Framework\App\State;
+use Sozo\Feedbucket\Service\ReporterToken;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
 
@@ -37,9 +37,9 @@ class Display extends Template
      */
     protected $ipChecker;
     /**
-     * @var State
+     * @var ReporterToken
      */
-    private $state;
+    protected $reporterToken;
 
     /**
      * @var array
@@ -50,19 +50,19 @@ class Display extends Template
      * @param Context $context
      * @param ConfigProvider $configProvider
      * @param IpCheckerService $ipCheckerService
-     * @param State $state
+     * @param ReporterToken $reporterToken
      * @param array $data
      */
     public function __construct(
         Context $context,
         ConfigProvider $configProvider,
         IpCheckerService $ipCheckerService,
-        State $state,
+        ReporterToken $reporterToken,
         array $data = []
     ) {
         $this->configProvider = $configProvider;
         $this->ipChecker = $ipCheckerService;
-        $this->state = $state;
+        $this->reporterToken = $reporterToken;
 
         parent::__construct($context, $data);
     }

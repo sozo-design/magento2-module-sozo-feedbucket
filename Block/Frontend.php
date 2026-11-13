@@ -21,8 +21,8 @@ namespace Sozo\Feedbucket\Block;
 
 use Sozo\Feedbucket\Model\ConfigProvider;
 use Sozo\Feedbucket\Service\IpCheckerService;
+use Sozo\Feedbucket\Service\ReporterToken;
 use Magento\Customer\Model\SessionFactory;
-use Magento\Framework\App\State;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\View\Element\Template\Context;
@@ -38,7 +38,7 @@ class Frontend extends Display
      * @param Context $context
      * @param ConfigProvider $configProvider
      * @param IpCheckerService $ipCheckerService
-     * @param State $state
+     * @param ReporterToken $reporterToken
      * @param SessionFactory $customerSession
      * @param array $data
      */
@@ -46,11 +46,11 @@ class Frontend extends Display
         Context $context,
         ConfigProvider $configProvider,
         IpCheckerService $ipCheckerService,
-        State $state,
+        ReporterToken $reporterToken,
         SessionFactory $customerSession,
         array $data = []
     ) {
-        parent::__construct($context, $configProvider, $ipCheckerService, $state, $data);
+        parent::__construct($context, $configProvider, $ipCheckerService, $reporterToken, $data);
         $this->customerSession = $customerSession;
     }
 
@@ -85,7 +85,10 @@ class Frontend extends Display
                 'email' => $customer->getEmail()
             ];
 
-            $config['reporter']['token'] = $this->configProvider->getUserHash($config['reporter']);
+            $token = $this->reporterToken->forUser(ReporterToken::TYPE_CUSTOMER, $customer->getId());
+            if ($token !== '') {
+                $config['reporter']['token'] = $token;
+            }
         }
 
         return $this->jsConfig = array_merge($this->jsConfig, $config);

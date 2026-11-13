@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 * [Security] in case of vulnerabilities.
 
 ## [Unreleased]
+### Security
+- The reporter token was an HMAC of the user's name and email keyed with the widget key, which is printed in every page, so anyone who knew a user's name and email could compute it and see that user's feedback. It is now an HMAC of the user type and ID keyed with the installation's encryption key. Reporters who used "user feedback" mode before this release get a new token, so their earlier feedback is no longer shown to them
+
 ### Fixed
 - An enabled module with no Secret threw a TypeError on every page. The widget is now left out until a Secret is entered
 - Storefront "Capture User Data" sent the customer's ID number to Feedbucket as their name
@@ -27,6 +30,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Backend Configuration settings can only be set at Default Config, the only scope the admin uses
 
 ### Removed
+- `ConfigProvider::getUserHash()` (replaced by `Service\ReporterToken`) and the unused `State` dependency of the widget blocks
 - GitHub Actions workflow (`m2-test`): it could no longer install Magento 2.4.6 and failed on every push
 
 ## [v400.1.0] - 2026-11-13
