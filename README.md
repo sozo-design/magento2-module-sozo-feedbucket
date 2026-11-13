@@ -5,9 +5,11 @@
 [![Latest Stable Version][ico-version]][link-version]
 [![StyleCI][ico-styleci]][link-styleci]
 
+Full documentation (SOZO staff): https://sozodesign-co.getoutline.com/doc/feedbucket-1uP4OwrCIE
+
 ## Installation
 1. You need an active [Feedbucket account](https://dashboard.feedbucket.app/register).
-2. Install with Composer: `composer require sozodesign/magento2-module-sozo-feedbucket`. It needs `sozodesign/magento2-module-sozo-core` (v401 or v402) from SOZO's private package repository.
+2. Install with Composer: `composer require sozodesign/magento2-module-sozo-feedbucket`. It needs `sozodesign/magento2-module-sozo-core` v402 from SOZO's private package repository.
 3. Run `bin/magento setup:upgrade` (and `setup:di:compile` in production mode).
 4. In the admin, go to **Stores > Configuration > SOZO Extensions > Feedbucket** (also under **SOZO Design > Feedbucket**), turn the module on and enter the widget key from Feedbucket's install snippet (the value of `data-feedbucket`).
 5. Turn on **Display on Frontend** and/or **Display on Backend**.
@@ -37,6 +39,14 @@ With Capture User Data on, each reporter gets a token so Feedbucket can show use
 ## Behind Cloudflare, Varnish or a load balancer
 
 The IP whitelist checks the address Magento sees (`RemoteAddress`). Behind a proxy that is the proxy's address unless the real visitor IP is passed through, for example with nginx `real_ip` (`set_real_ip_from` + `real_ip_header CF-Connecting-IP` or `X-Forwarded-For`), or by giving `Magento\Framework\HTTP\PhpEnvironment\RemoteAddress` `alternativeHeaders` in the project's `di.xml`. Check this before relying on the whitelist.
+
+## SOZO Design menu, settings panel and log
+
+These come from Sozo_Core 402:
+
+- **Menu:** Sozo_Core's SOZO Design menu lists Feedbucket with a Configuration link (from the settings section) and a Documentation link (from `support.docs` in `composer.json`). The module has no `menu.xml`.
+- **Settings panel:** the panel at the top of the settings is Core's `AbstractHint`.
+- **Log:** `var/log/sozo/core.log`, channel `Sozo_Feedbucket`. In developer mode there is a debug line for each IP whitelist check (entry count, the line numbers of entries it can't read, and the result; no IP addresses). There is also a warning when a reporter token can't be made because there is no encryption key.
 
 ## Content Security Policy
 

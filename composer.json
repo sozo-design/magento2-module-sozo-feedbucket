@@ -12,7 +12,8 @@
     ],
     "support": {
         "email": "magento@sozodesign.co.uk",
-        "source": "https://github.com/sozo-design/magento2-module-sozo-feedbucket"
+        "source": "https://github.com/sozo-design/magento2-module-sozo-feedbucket",
+        "docs": "https://sozodesign-co.getoutline.com/doc/feedbucket-1uP4OwrCIE"
     },
     "license": "OSL-3.0",
     "require": {
