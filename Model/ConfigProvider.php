@@ -66,7 +66,7 @@ class ConfigProvider extends ConfigProviderAbstract
      */
     public function getSecret(?int $storeId = null): string
     {
-        return $this->getValue(self::CFG_FEEDBUCKET_SECRET, $storeId, ScopeInterface::SCOPE_STORE);
+        return trim((string)$this->getValue(self::CFG_FEEDBUCKET_SECRET, $storeId, ScopeInterface::SCOPE_STORE));
     }
 
     /**
@@ -141,7 +141,7 @@ class ConfigProvider extends ConfigProviderAbstract
      * @param array $data
      * @return string
      */
-    public function getUserHash(array $data)
+    public function getUserHash(array $data): string
     {
         $string = implode('|', $data);
         return hash_hmac("sha256", $string, $this->getSecret());

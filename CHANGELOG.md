@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Fixed
+- An enabled module with no Secret threw a TypeError on every page. The widget is now left out until a Secret is entered
 - Storefront "Capture User Data" sent the customer's ID number to Feedbucket as their name
 - Settings saved at website or store view scope were ignored: the module only read the Default Config values. The storefront now uses the current store view's settings
 - IP whitelist: only the last line of the list could match, because the admin saves lines with CRLF and the lines weren't trimmed. Blank lines and spaces are now ignored too

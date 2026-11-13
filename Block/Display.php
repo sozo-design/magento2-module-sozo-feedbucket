@@ -70,9 +70,9 @@ class Display extends Template
     /**
      * Get the Widget ID
      *
-     * @return string|null
+     * @return string
      */
-    public function getSecret(): ?string
+    public function getSecret(): string
     {
         return $this->configProvider->getSecret();
     }
@@ -105,9 +105,10 @@ class Display extends Template
      */
     public function _toHtml(): string
     {
-        $enabled = $this->configProvider->isEnabled();
-        $ipAllowed = $this->ipChecker->checkAllowed();
+        if (!$this->configProvider->isEnabled() || $this->getSecret() === '') {
+            return '';
+        }
 
-        return ($enabled && $ipAllowed) ? parent::_toHtml() : '';
+        return $this->ipChecker->checkAllowed() ? parent::_toHtml() : '';
     }
 }
