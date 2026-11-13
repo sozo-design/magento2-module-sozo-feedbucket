@@ -41,10 +41,13 @@ class ConfigProvider extends ConfigProviderAbstract
     private const CFG_FEEDBUCKET_FRONTEND_ENABLED = 'frontend/enabled';
     private const CFG_FEEDBUCKET_FRONTEND_CAPTURE_USER_DATA = 'frontend/capture_user_data';
     private const CFG_FEEDBUCKET_FRONTEND_HIDE_ON_CHECKOUT = 'frontend/hide_on_checkout';
+    private const CFG_FEEDBUCKET_FRONTEND_HIDE_ON_ACCOUNT = 'frontend/hide_on_account';
     private const CFG_FEEDBUCKET_FRONTEND_HIDDEN_PAGES = 'frontend/hidden_pages';
 
     private const CFG_FEEDBUCKET_BACKEND_ENABLED = 'backend/enabled';
     private const CFG_FEEDBUCKET_BACKEND_CAPTURE_USER_DATA = 'backend/capture_user_data';
+    private const CFG_FEEDBUCKET_BACKEND_HIDE_ON_PERSONAL_DATA = 'backend/hide_on_personal_data';
+    private const CFG_FEEDBUCKET_BACKEND_HIDDEN_PAGES = 'backend/hidden_pages';
 
     private const CFG_FEEDBUCKET_WHITELIST_ENABLED = 'ip_whitelist/enabled';
     private const CFG_FEEDBUCKET_WHITELIST_WHITELIST = 'ip_whitelist/whitelist';
@@ -105,6 +108,17 @@ class ConfigProvider extends ConfigProviderAbstract
     }
 
     /**
+     * Keep the storefront widget off My Account pages
+     *
+     * @param int|null $storeId
+     * @return bool
+     */
+    public function isFrontendHiddenOnAccount(?int $storeId = null): bool
+    {
+        return $this->isSetFlag(self::CFG_FEEDBUCKET_FRONTEND_HIDE_ON_ACCOUNT, $storeId, ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
      * Extra storefront pages (full action names, one per line) the widget is kept off
      *
      * @param int|null $storeId
@@ -135,6 +149,26 @@ class ConfigProvider extends ConfigProviderAbstract
     public function isBackendCaptureUserData(?int $storeId = null): bool
     {
         return $this->isSetFlag(self::CFG_FEEDBUCKET_BACKEND_CAPTURE_USER_DATA, $storeId, ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
+     * Keep the admin widget off pages that show personal data
+     *
+     * @return bool
+     */
+    public function isBackendHiddenOnPersonalData(): bool
+    {
+        return $this->isSetFlag(self::CFG_FEEDBUCKET_BACKEND_HIDE_ON_PERSONAL_DATA, null, ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
+     * Extra admin pages (full action names, one per line) the widget is kept off
+     *
+     * @return string
+     */
+    public function getBackendHiddenPages(): string
+    {
+        return (string)$this->getValue(self::CFG_FEEDBUCKET_BACKEND_HIDDEN_PAGES, null, ScopeInterface::SCOPE_STORE);
     }
 
     /**

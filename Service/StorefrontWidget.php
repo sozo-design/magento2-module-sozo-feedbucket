@@ -75,7 +75,7 @@ class StorefrontWidget
     }
 
     /**
-     * Is the widget kept off this page (checkout and payment pages, plus the "Also Hide on Pages" list)
+     * Is the widget kept off this page (checkout, payment and account pages, plus the "Also Hide on Pages" list)
      *
      * Depends only on the page and store settings, so it is safe in the full page cache.
      *
@@ -97,6 +97,9 @@ class StorefrontWidget
         $rules = $this->pageFilter->parseList($this->configProvider->getFrontendHiddenPages());
         if ($this->configProvider->isFrontendHiddenOnCheckout()) {
             $rules = array_merge(PageFilter::CHECKOUT_PAGES, $rules);
+        }
+        if ($this->configProvider->isFrontendHiddenOnAccount()) {
+            $rules = array_merge(PageFilter::ACCOUNT_PAGES, $rules);
         }
 
         return $rules;

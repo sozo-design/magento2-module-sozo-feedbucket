@@ -40,6 +40,48 @@ class PageFilter
     ];
 
     /**
+     * Storefront account pages that show the customer's personal data. Login, registration and password
+     * reset pages are not included, so reviewers can still comment on them.
+     */
+    public const ACCOUNT_PAGES = [
+        'customer_account_index',
+        'customer_account_edit',
+        'customer_address_*',
+        'sales_order_*',
+        'sales_guest_*',
+        'wishlist_*',
+        'review_customer_*',
+        'newsletter_manage_*',
+        'vault_cards_*',
+        'downloadable_customer_*',
+        'paypal_billing_agreement_*',
+    ];
+
+    /**
+     * Admin pages that show customers' or admin users' personal data
+     */
+    public const ADMIN_PERSONAL_DATA_PAGES = [
+        'adminhtml_dashboard_*',
+        'customer_index_*',
+        'customer_online_*',
+        'sales_order_*',
+        'sales_invoice_*',
+        'sales_shipment_*',
+        'sales_creditmemo_*',
+        'sales_transactions_*',
+        'sales_archive_*',
+        'adminhtml_order_shipment_*',
+        'paypal_billing_agreement_*',
+        'newsletter_subscriber_*',
+        'newsletter_problem_*',
+        'reports_report_customer_*',
+        'reports_report_shopcart_*',
+        'reports_report_review_customer',
+        'adminhtml_rma_*',
+        'adminhtml_user_*',
+    ];
+
+    /**
      * Split a "one rule per line" setting into rules, ignoring blank lines and surrounding whitespace
      *
      * @param string|null $rules

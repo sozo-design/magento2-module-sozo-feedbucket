@@ -88,6 +88,19 @@
                     </depends>
                 </field>
 
+                <field id="hide_on_account" translate="label comment" type="select" sortOrder="25" showInDefault="1" showInStore="1" showInWebsite="1">
+                    <label>Hide on Account Pages?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[
+                        <p>Keeps the widget off My Account pages (account dashboard and details, addresses, orders, wishlist, saved cards), so a screenshot doesn't send a customer's personal data to Feedbucket. Login, registration and password reset still show it.</p>
+                        ]]>
+                    </comment>
+                    <depends>
+                        <field id="*/*/enabled">1</field>
+                    </depends>
+                </field>
+
                 <field id="hidden_pages" translate="label comment" type="textarea" sortOrder="30" showInDefault="1" showInStore="1" showInWebsite="1">
                     <label>Also Hide on Pages</label>
                     <comment>
@@ -119,6 +132,31 @@
                     <comment>
                         <![CDATA[
                         <p>Sends the logged-in admin user's name and email address to Feedbucket with their feedback, so they are named as the reporter and only see their own feedback. Set this to <strong>No</strong> to keep this information out of Feedbucket.</p>
+                        ]]>
+                    </comment>
+                    <depends>
+                        <field id="*/*/enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="hide_on_personal_data" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInStore="0" showInWebsite="0">
+                    <label>Hide on Personal Data Pages?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[
+                        <p>Keeps the widget off admin pages that show personal data (dashboard, customers, orders, invoices, shipments, credit memos, transactions, newsletter subscribers, customer reports, admin users), so a screenshot doesn't send it to Feedbucket.</p>
+                        ]]>
+                    </comment>
+                    <depends>
+                        <field id="*/*/enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="hidden_pages" translate="label comment" type="textarea" sortOrder="30" showInDefault="1" showInStore="0" showInWebsite="0">
+                    <label>Also Hide on Pages</label>
+                    <comment>
+                        <![CDATA[
+                        <p>Admin page names (full action names), one per line, e.g. <code>review_product_edit</code>. End with <code>*</code> to match every page that starts with it, e.g. <code>mymodule_*</code>.</p>
                         ]]>
                     </comment>
                     <depends>

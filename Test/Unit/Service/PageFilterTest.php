@@ -57,6 +57,64 @@ class PageFilterTest extends TestCase
         ];
     }
 
+    /**
+     * @dataProvider accountProvider
+     */
+    public function testAccountPages(string $page, bool $hidden): void
+    {
+        $this->assertSame($hidden, $this->filter->isHidden($page, PageFilter::ACCOUNT_PAGES));
+    }
+
+    public static function accountProvider(): array
+    {
+        return [
+            'dashboard' => ['customer_account_index', true],
+            'edit' => ['customer_account_edit', true],
+            'address book' => ['customer_address_index', true],
+            'order history' => ['sales_order_history', true],
+            'order view' => ['sales_order_view', true],
+            'guest order view' => ['sales_guest_view', true],
+            'wishlist' => ['wishlist_index_index', true],
+            'saved cards' => ['vault_cards_listaction', true],
+            'login stays' => ['customer_account_login', false],
+            'register stays' => ['customer_account_create', false],
+            'forgot password stays' => ['customer_account_forgotpassword', false],
+            'category stays' => ['catalog_category_view', false],
+        ];
+    }
+
+    /**
+     * @dataProvider adminProvider
+     */
+    public function testAdminPersonalDataPages(string $page, bool $hidden): void
+    {
+        $this->assertSame($hidden, $this->filter->isHidden($page, PageFilter::ADMIN_PERSONAL_DATA_PAGES));
+    }
+
+    public static function adminProvider(): array
+    {
+        return [
+            'dashboard' => ['adminhtml_dashboard_index', true],
+            'customer grid' => ['customer_index_index', true],
+            'customer edit' => ['customer_index_edit', true],
+            'customers online' => ['customer_online_index', true],
+            'order grid' => ['sales_order_index', true],
+            'order view' => ['sales_order_view', true],
+            'order create' => ['sales_order_create_index', true],
+            'invoice view' => ['sales_order_invoice_view', true],
+            'invoice grid' => ['sales_invoice_index', true],
+            'shipment view' => ['adminhtml_order_shipment_view', true],
+            'credit memo grid' => ['sales_creditmemo_index', true],
+            'subscribers' => ['newsletter_subscriber_index', true],
+            'abandoned carts' => ['reports_report_shopcart_abandoned', true],
+            'admin users' => ['adminhtml_user_edit', true],
+            'cart price rules stay' => ['sales_rule_promo_quote_index', false],
+            'products stay' => ['catalog_product_edit', false],
+            'config stays' => ['adminhtml_system_config_edit', false],
+            'cms stays' => ['cms_page_edit', false],
+        ];
+    }
+
     public function testExactRuleDoesNotMatchLongerNames(): void
     {
         $this->assertTrue($this->filter->isHidden('cms_page_view', ['cms_page_view']));

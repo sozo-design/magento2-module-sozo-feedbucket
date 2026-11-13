@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
+- Frontend **Hide on Account Pages?** (on by default): keeps the widget off My Account pages that show personal data (account dashboard and details, addresses, orders, guest order view, wishlist, saved cards, billing agreements), so screenshots don't send it to Feedbucket. Login, registration and password reset still show it
+- Backend **Hide on Personal Data Pages?** (on by default): keeps the admin widget off the dashboard and the customer, order, invoice, shipment, credit memo, transaction, newsletter subscriber, customer report, RMA and admin user pages
+- Backend **Also Hide on Pages**: more admin pages to keep the widget off, by full action name (`prefix*` allowed)
 - Frontend **Hide on Checkout?** (on by default): keeps the widget off the checkout, multishipping, PayPal/Braintree review, one-step checkout and order confirmation pages, because PCI DSS 4.0 (6.4.3) expects every script on a payment page to be listed and justified. The basket still shows it
 - Frontend **Also Hide on Pages**: more pages to keep the widget off, by full action name (`prefix*` allowed), e.g. a third-party checkout on its own route
 - Documentation page in SOZO's Outline, linked from composer.json `support.docs` (shown as Documentation in the SOZO Design admin menu)

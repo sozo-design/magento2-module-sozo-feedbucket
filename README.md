@@ -19,9 +19,13 @@ Full documentation (SOZO staff): https://sozodesign-co.getoutline.com/doc/feedbu
 | Setting | Scope | What it does |
 |---|---|---|
 | General > Enabled, Secret | Default, website, store view | Switches the module on and sets the widget key. With no key, nothing is output. |
-| Frontend Configuration | Default, website, store view | Shows the widget on the storefront. **Capture User Data** sends the logged-in customer's name and email to Feedbucket. **Hide on Checkout** (on by default) keeps it off checkout, payment review and order confirmation pages. **Also Hide on Pages** takes more page names (full action names, `prefix*` allowed). |
-| Backend Configuration | Default only | Shows the widget in the admin. **Capture User Data** sends the admin user's name and email. |
+| Frontend Configuration | Default, website, store view | Shows the widget on the storefront. **Capture User Data** sends the logged-in customer's name and email to Feedbucket. **Hide on Checkout** (on by default) keeps it off checkout, payment review and order confirmation pages. **Hide on Account Pages** (on by default) keeps it off My Account pages that show personal data; login, registration and password reset still show it. **Also Hide on Pages** takes more page names (full action names, `prefix*` allowed). |
+| Backend Configuration | Default only | Shows the widget in the admin. **Capture User Data** sends the admin user's name and email. **Hide on Personal Data Pages** (on by default) keeps it off the dashboard and the customer, order, invoice, shipment, credit memo, transaction, newsletter subscriber, customer report and admin user pages. **Also Hide on Pages** takes more admin page names. |
 | IP Whitelist | Default, website, store view | Only show the widget to listed addresses. One entry per line: an address (IPv4 or IPv6), CIDR (`10.0.0.0/8`, `2001:db8::/32`), address/netmask (`192.168.1.0/255.255.255.0`), wildcard (`192.168.*.*`) or range (`10.0.0.10-10.0.0.20`). |
+
+## Why some pages are left out by default
+
+Feedbucket screenshots and recordings capture what is on screen and send it to Feedbucket. Payment pages fall under PCI DSS 4.0 (6.4.3, every script on a payment page must be listed and justified), and account and admin pages show customers' personal data. The page lists are in `Service\PageFilter` (`CHECKOUT_PAGES`, `ACCOUNT_PAGES`, `ADMIN_PERSONAL_DATA_PAGES`). Turn a setting off only on a test site with no real customer data.
 
 ## How the storefront widget works with the full page cache
 
