@@ -13,23 +13,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 * [Security] in case of vulnerabilities.
 
 ## [Unreleased]
-### Security
-- The widget script is output through Magento's `SecureHtmlRenderer`, so Magento 2.4.7+ can allow it under the strict checkout Content Security Policy, and the reporter details and key are JSON-encoded so a name containing `</script>` or quotes can't break out of the script
-- The reporter token was an HMAC of the user's name and email keyed with the widget key, which is printed in every page, so anyone who knew a user's name and email could compute it and see that user's feedback. It is now an HMAC of the user type and ID keyed with the installation's encryption key. Reporters who used "user feedback" mode before this release get a new token, so their earlier feedback is no longer shown to them
-
-### Fixed
-- Default config for the admin widget was stored under `admin` instead of `backend`
-- Full page cache: the IP whitelist decision and the logged-in customer's details were rendered into cached storefront pages, so whichever visitor loaded a page first decided whether everyone saw the widget (and with whose details). The cached page now only depends on store settings. When the IP whitelist or "Capture User Data" is on, a small loader asks the new uncached `feedbucket/widget/config` endpoint per visitor, and the widget key is no longer in public pages
-- An enabled module with no Secret threw a TypeError on every page. The widget is now left out until a Secret is entered
-- Storefront "Capture User Data" sent the customer's ID number to Feedbucket as their name
-- Settings saved at website or store view scope were ignored: the module only read the Default Config values. The storefront now uses the current store view's settings
-- IP whitelist: only the last line of the list could match, because the admin saves lines with CRLF and the lines weren't trimmed. Blank lines and spaces are now ignored too
-- IP whitelist: a CIDR entry (e.g. `10.0.0.0/8`) after a plain address was never checked
-
 ### Added
 - `GET /feedbucket/widget/config` (never cached): whether the current visitor gets the storefront widget, its key and reporter details. Answers without reporter details are reused for 10 minutes per browser session
 - IP whitelist: IPv6 addresses and CIDR ranges
 - Unit tests for the IP whitelist matching (`Test/Unit`)
+
 ### Changed
 - composer.json lists the PHP versions (8.1 to 8.4) and Magento modules the module uses, plus `support.source`; module.xml loads it after Sozo_Core and those Magento modules
 - Admin help text says what "Capture User Data" actually sends (name and email), what the Secret is, and which IP whitelist formats work
@@ -40,6 +28,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Unused `Block\System\Config\Form\Field\Version` block and the unused `Hint::getPxParams()`
 - `ConfigProvider::getUserHash()` (replaced by `Service\ReporterToken`) and the unused `State` dependency of the widget blocks
 - GitHub Actions workflow (`m2-test`): it could no longer install Magento 2.4.6 and failed on every push
+
+### Fixed
+- Default config for the admin widget was stored under `admin` instead of `backend`
+- Full page cache: the IP whitelist decision and the logged-in customer's details were rendered into cached storefront pages, so whichever visitor loaded a page first decided whether everyone saw the widget (and with whose details). The cached page now only depends on store settings. When the IP whitelist or "Capture User Data" is on, a small loader asks the new uncached `feedbucket/widget/config` endpoint per visitor, and the widget key is no longer in public pages
+- An enabled module with no Secret threw a TypeError on every page. The widget is now left out until a Secret is entered
+- Storefront "Capture User Data" sent the customer's ID number to Feedbucket as their name
+- Settings saved at website or store view scope were ignored: the module only read the Default Config values. The storefront now uses the current store view's settings
+- IP whitelist: only the last line of the list could match, because the admin saves lines with CRLF and the lines weren't trimmed. Blank lines and spaces are now ignored too
+- IP whitelist: a CIDR entry (e.g. `10.0.0.0/8`) after a plain address was never checked
+
+### Security
+- The widget script is output through Magento's `SecureHtmlRenderer`, so Magento 2.4.7+ can allow it under the strict checkout Content Security Policy, and the reporter details and key are JSON-encoded so a name containing `</script>` or quotes can't break out of the script
+- The reporter token was an HMAC of the user's name and email keyed with the widget key, which is printed in every page, so anyone who knew a user's name and email could compute it and see that user's feedback. It is now an HMAC of the user type and ID keyed with the installation's encryption key. Reporters who used "user feedback" mode before this release get a new token, so their earlier feedback is no longer shown to them
 
 ## [v400.1.0] - 2026-11-13
 ### Changed
