@@ -10,9 +10,19 @@
             "homepage": "https://sozodesign.co.uk"
         }
     ],
+    "support": {
+        "email": "magento@sozodesign.co.uk",
+        "source": "https://github.com/sozo-design/magento2-module-sozo-feedbucket"
+    },
     "license": "OSL-3.0",
     "require": {
+        "php": "~8.1.0||~8.2.0||~8.3.0||~8.4.0",
         "magento/framework": ">=103.0.3",
+        "magento/module-backend": "*",
+        "magento/module-config": "*",
+        "magento/module-customer": "*",
+        "magento/module-store": "*",
+        "magento/module-user": "*",
         "sozodesign/magento2-module-sozo-core": "^401.0 || ^402.0",
         "ext-json": "*"
     },

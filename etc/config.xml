@@ -26,10 +26,10 @@
                 <enabled>0</enabled>
                 <capture_user_data>0</capture_user_data>
             </frontend>
-            <admin>
+            <backend>
                 <enabled>0</enabled>
                 <capture_user_data>0</capture_user_data>
-            </admin>
+            </backend>
             <ip_whitelist>
                 <enabled>0</enabled>
                 <whitelist></whitelist>

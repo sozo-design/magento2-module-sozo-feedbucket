@@ -22,11 +22,8 @@ namespace Sozo\Feedbucket\Block\System\Config\Form\Fieldset;
 use Sozo\Feedbucket\Model\ConfigProvider;
 use Magento\Backend\Block\Template;
 use Magento\Backend\Block\Template\Context;
-use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\Data\Form\Element\Renderer\RendererInterface;
-use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Module\ModuleList\Loader;
 
 class Hint extends Template implements RendererInterface
 {
@@ -41,34 +38,18 @@ class Hint extends Template implements RendererInterface
     protected $_template = 'Sozo_Feedbucket::system/config/fieldset/hint.phtml';
 
     /**
-     * @var ProductMetadataInterface
-     */
-    protected $metaData;
-
-    /**
-     * @var Loader
-     */
-    protected $loader;
-
-    /**
      * Hint constructor.
      *
      * @param Context $context
-     * @param ProductMetadataInterface $productMetaData
-     * @param Loader $loader
      * @param ConfigProvider $configProvider
      * @param array $data
      */
     public function __construct(
         Context $context,
-        ProductMetadataInterface $productMetaData,
-        Loader $loader,
         ConfigProvider $configProvider,
         array $data = []
     ) {
         parent::__construct($context, $data);
-        $this->metaData = $productMetaData;
-        $this->loader = $loader;
         $this->configProvider = $configProvider;
     }
 
@@ -82,32 +63,6 @@ class Hint extends Template implements RendererInterface
     public function render(AbstractElement $element): string
     {
         return $this->toHtml();
-    }
-
-    /**
-     * Used to confirm usage of the module (not used)
-     *
-     * @return string
-     * @throws LocalizedException
-     */
-    public function getPxParams(): string
-    {
-        $modules = $this->loader->load();
-        $v = $this->configProvider->getExtensionVersion();
-        $extension = "Feedbucket;{$v}";
-        $mageEdition = $this->metaData->getEdition();
-        switch ($mageEdition) {
-            case 'Community':
-                $mageEdition = 'CE';
-                break;
-            case 'Enterprise':
-                $mageEdition = 'EE';
-                break;
-        }
-        $mageVersion = $this->metaData->getVersion();
-        $mage = "Magento {$mageEdition};{$mageVersion}";
-        $hash = hash('sha256', $extension . '_' . $mage . '_' . $extension);
-        return "ext=$extension&mage={$mage}&ctrl={$hash}";
     }
 
     /**
