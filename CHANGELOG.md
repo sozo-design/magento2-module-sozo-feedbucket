@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 * [Security] in case of vulnerabilities.
 
 ## [Unreleased]
+### Removed
+- GitHub Actions workflow (`m2-test`): it could no longer install Magento 2.4.6 and failed on every push
 
 ## [v400.1.0] - 2026-11-13
 ### Changed
