@@ -21,12 +21,17 @@ namespace Sozo\Feedbucket\Block;
 
 use Sozo\Feedbucket\Model\ConfigProvider;
 use Sozo\Feedbucket\Service\IpCheckerService;
-use Magento\Framework\App\State;
+use Sozo\Feedbucket\Service\ReporterToken;
 use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
 
 class Display extends Template
 {
+    /**
+     * Encode values so they are safe inside an inline script (no </script>, quotes or &)
+     */
+    protected const JSON_FLAGS = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
+
     /**
      * @var ConfigProvider
      */
@@ -37,9 +42,9 @@ class Display extends Template
      */
     protected $ipChecker;
     /**
-     * @var State
+     * @var ReporterToken
      */
-    private $state;
+    protected $reporterToken;
 
     /**
      * @var array
@@ -50,19 +55,19 @@ class Display extends Template
      * @param Context $context
      * @param ConfigProvider $configProvider
      * @param IpCheckerService $ipCheckerService
-     * @param State $state
+     * @param ReporterToken $reporterToken
      * @param array $data
      */
     public function __construct(
         Context $context,
         ConfigProvider $configProvider,
         IpCheckerService $ipCheckerService,
-        State $state,
+        ReporterToken $reporterToken,
         array $data = []
     ) {
         $this->configProvider = $configProvider;
         $this->ipChecker = $ipCheckerService;
-        $this->state = $state;
+        $this->reporterToken = $reporterToken;
 
         parent::__construct($context, $data);
     }
@@ -70,9 +75,9 @@ class Display extends Template
     /**
      * Get the Widget ID
      *
-     * @return string|null
+     * @return string
      */
-    public function getSecret(): ?string
+    public function getSecret(): string
     {
         return $this->configProvider->getSecret();
     }
@@ -95,7 +100,17 @@ class Display extends Template
     public function getJsConfig(): string
     {
         $this->prepareConfig();
-        return json_encode($this->jsConfig, JSON_FORCE_OBJECT);
+        return (string)json_encode($this->jsConfig, self::JSON_FLAGS | JSON_FORCE_OBJECT);
+    }
+
+    /**
+     * Return the widget key as a JavaScript string literal
+     *
+     * @return string
+     */
+    public function getJsonSecret(): string
+    {
+        return (string)json_encode($this->getSecret(), self::JSON_FLAGS);
     }
 
     /**
@@ -105,9 +120,18 @@ class Display extends Template
      */
     public function _toHtml(): string
     {
-        $enabled = $this->configProvider->isEnabled();
-        $ipAllowed = $this->ipChecker->checkAllowed();
+        return $this->canShow() ? parent::_toHtml() : '';
+    }
 
-        return ($enabled && $ipAllowed) ? parent::_toHtml() : '';
+    /**
+     * Should the widget be output for this request
+     *
+     * @return bool
+     */
+    protected function canShow(): bool
+    {
+        return $this->configProvider->isEnabled()
+            && $this->getSecret() !== ''
+            && $this->ipChecker->checkAllowed();
     }
 }

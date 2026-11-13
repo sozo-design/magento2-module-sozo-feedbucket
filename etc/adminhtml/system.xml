@@ -43,7 +43,7 @@
                        showInStore="1" showInWebsite="1">
                     <label>Secret</label>
                     <comment>
-                        <![CDATA[Enter the secret to identify the website.]]>
+                        <![CDATA[The widget key from the Feedbucket install snippet (the value of <code>data-feedbucket</code>).]]>
                     </comment>
                     <depends>
                         <field id="*/*/enabled">1</field>
@@ -67,7 +67,45 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>
                         <![CDATA[
-                        <p>The Feedbucket widget can track a users Magento username and role if they are logged in to the site. If you don't want this information to be passed to Feedbucket set this option to <strong>No</strong></p>
+                        <p>Sends the logged-in user's name and email address to Feedbucket with their feedback, so they are named as the reporter and only see their own feedback. Set this to <strong>No</strong> to keep this information out of Feedbucket.</p>
+                        ]]>
+                    </comment>
+                    <depends>
+                        <field id="*/*/enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="hide_on_checkout" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInStore="1" showInWebsite="1">
+                    <label>Hide on Checkout?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[
+                        <p>Keeps the widget off the checkout, payment review and order confirmation pages (the basket still shows it). PCI DSS 4.0 expects every script on a payment page to be listed and justified, and a screenshot could capture payment details. Only set this to <strong>No</strong> on a test site.</p>
+                        ]]>
+                    </comment>
+                    <depends>
+                        <field id="*/*/enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="hide_on_account" translate="label comment" type="select" sortOrder="25" showInDefault="1" showInStore="1" showInWebsite="1">
+                    <label>Hide on Account Pages?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[
+                        <p>Keeps the widget off My Account pages (account dashboard and details, addresses, orders, wishlist, saved cards), so a screenshot doesn't send a customer's personal data to Feedbucket. Login, registration and password reset still show it.</p>
+                        ]]>
+                    </comment>
+                    <depends>
+                        <field id="*/*/enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="hidden_pages" translate="label comment" type="textarea" sortOrder="30" showInDefault="1" showInStore="1" showInWebsite="1">
+                    <label>Also Hide on Pages</label>
+                    <comment>
+                        <![CDATA[
+                        <p>Magento page names (full action names), one per line, e.g. <code>amasty_checkout_index_index</code>. End with <code>*</code> to match every page that starts with it, e.g. <code>mymodule_*</code>. Use this for third-party checkouts on their own route.</p>
                         ]]>
                     </comment>
                     <depends>
@@ -76,23 +114,49 @@
                 </field>
             </group>
 
-            <group id="backend" translate="label" sortOrder="16" showInDefault="1" showInWebsite="1" showInStore="1">
+            <group id="backend" translate="label" sortOrder="16" showInDefault="1" showInWebsite="0" showInStore="0">
                 <label>Backend Configuration</label>
+                <comment>The admin always uses the Default Config values.</comment>
                 <depends>
                     <field id="*/general/enabled">1</field>
                 </depends>
 
-                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInStore="1" showInWebsite="1">
+                <field id="enabled" translate="label" type="select" sortOrder="10" showInDefault="1" showInStore="0" showInWebsite="0">
                     <label>Display on Backend?</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
 
-                <field id="capture_user_data" translate="label" type="select" sortOrder="11" showInDefault="1" showInStore="1" showInWebsite="1">
+                <field id="capture_user_data" translate="label" type="select" sortOrder="11" showInDefault="1" showInStore="0" showInWebsite="0">
                     <label>Capture User Data?</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>
                         <![CDATA[
-                        <p>The Feedbucket widget can track a users Magento username and role if they are logged in to the site. If you don't want this information to be passed to Feedbucket set this option to <strong>No</strong></p>
+                        <p>Sends the logged-in admin user's name and email address to Feedbucket with their feedback, so they are named as the reporter and only see their own feedback. Set this to <strong>No</strong> to keep this information out of Feedbucket.</p>
+                        ]]>
+                    </comment>
+                    <depends>
+                        <field id="*/*/enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="hide_on_personal_data" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInStore="0" showInWebsite="0">
+                    <label>Hide on Personal Data Pages?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[
+                        <p>Keeps the widget off admin pages that show personal data (dashboard, customers, orders, invoices, shipments, credit memos, transactions, newsletter subscribers, customer reports, admin users), so a screenshot doesn't send it to Feedbucket.</p>
+                        ]]>
+                    </comment>
+                    <depends>
+                        <field id="*/*/enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="hidden_pages" translate="label comment" type="textarea" sortOrder="30" showInDefault="1" showInStore="0" showInWebsite="0">
+                    <label>Also Hide on Pages</label>
+                    <comment>
+                        <![CDATA[
+                        <p>Admin page names (full action names), one per line, e.g. <code>review_product_edit</code>. End with <code>*</code> to match every page that starts with it, e.g. <code>mymodule_*</code>.</p>
                         ]]>
                     </comment>
                     <depends>
@@ -124,7 +188,7 @@
 
                 <field id="whitelist" translate="label comment" type="textarea" sortOrder="30" showInDefault="1" showInStore="1" showInWebsite="1">
                     <label>IP Whitelist</label>
-                    <comment>1 IP address per line</comment>
+                    <comment><![CDATA[One entry per line: an address (IPv4 or IPv6), CIDR (<code>10.0.0.0/8</code>), address/netmask (<code>192.168.1.0/255.255.255.0</code>), wildcard (<code>192.168.*.*</code>) or range (<code>10.0.0.10-10.0.0.20</code>).]]></comment>
                     <depends>
                         <field id="*/*/enabled">1</field>
                     </depends>

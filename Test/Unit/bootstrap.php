@@ -1,3 +1,4 @@
+<?php
 /*
  * SOZO Design Ltd
  *
@@ -12,19 +13,9 @@
  * @package     Sozo_Feedbucket
  * @copyright   Copyright (c) SOZO Design Ltd (https://sozodesign.co.uk)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
- */
+ */declare(strict_types=1);
 
-@import 'module/variables/_variables.less';
-
-//  System Configuration
-#sozo-container {
-    .lib-clearfix();
-    background: @panel__background-color;
-    border: 1px solid @border-color__base;
-    margin: 0 0  @indent__base;
-    padding: @indent__base;
-    img{
-        float:left;
-        padding-right: @indent__base;
-    }
-}
+// Lets the Magento-free unit tests run on their own: phpunit --bootstrap Test/Unit/bootstrap.php Test/Unit
+// (inside a Magento project, Magento's own unit test bootstrap autoloads these classes instead)
+require_once __DIR__ . '/../../Service/IpMatcher.php';
+require_once __DIR__ . '/../../Service/PageFilter.php';

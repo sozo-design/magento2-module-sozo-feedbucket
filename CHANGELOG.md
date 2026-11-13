@@ -13,6 +13,48 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 * [Security] in case of vulnerabilities.
 
 ## [Unreleased]
+### Added
+- Frontend **Hide on Account Pages?** (on by default): keeps the widget off My Account pages that show personal data (account dashboard and details, addresses, orders, guest order view, wishlist, saved cards, billing agreements), so screenshots don't send it to Feedbucket. Login, registration and password reset still show it
+- Backend **Hide on Personal Data Pages?** (on by default): keeps the admin widget off the dashboard and the customer, order, invoice, shipment, credit memo, transaction, newsletter subscriber, customer report, RMA and admin user pages
+- Backend **Also Hide on Pages**: more admin pages to keep the widget off, by full action name (`prefix*` allowed)
+- Frontend **Hide on Checkout?** (on by default): keeps the widget off the checkout, multishipping, PayPal/Braintree review, one-step checkout and order confirmation pages, because PCI DSS 4.0 (6.4.3) expects every script on a payment page to be listed and justified. The basket still shows it
+- Frontend **Also Hide on Pages**: more pages to keep the widget off, by full action name (`prefix*` allowed), e.g. a third-party checkout on its own route
+- Documentation page in SOZO's Outline, linked from composer.json `support.docs` (shown as Documentation in the SOZO Design admin menu)
+- Logging to the shared SOZO log (`var/log/sozo/core.log`, channel `Sozo_Feedbucket`, from Sozo_Core 402): a debug line per IP whitelist check (developer mode only; entry count, invalid entry line numbers and the result, no IP addresses) and a warning when a reporter token can't be made because there is no encryption key
+- `GET /feedbucket/widget/config` (never cached): whether the current visitor gets the storefront widget, its key and reporter details. Answers without reporter details are reused for 10 minutes per browser session
+- IP whitelist: IPv6 addresses and CIDR ranges
+- Unit tests for the IP whitelist matching (`Test/Unit`)
+
+### Changed
+- Requires Sozo_Core v402 (`^402.0`): the SOZO panel, the SOZO Design menu entry and the SOZO log all come from Core 402
+- The SOZO Design admin menu entry (Configuration and Documentation links) is now built by Sozo_Core from the settings section and `support.docs`, like other SOZO modules
+- The SOZO panel at the top of the configuration now comes from Sozo_Core (`AbstractHint`), so it looks the same as every other SOZO module
+- composer.json lists the PHP versions (8.1 to 8.4) and Magento modules the module uses, plus `support.source`; module.xml loads it after Sozo_Core and those Magento modules
+- Admin help text says what "Capture User Data" actually sends (name and email), what the Secret is, and which IP whitelist formats work
+- Translation file only lists the strings the module uses
+- Backend Configuration settings can only be set at Default Config, the only scope the admin uses
+
+### Removed
+- `etc/adminhtml/menu.xml` (Sozo_Core's SOZO Design menu lists the module)
+- Feedbucket's own hint template, its admin styles and the unused `UpdatedLogo.png` (Sozo_Core provides the panel and its styles)
+- Unused `Block\System\Config\Form\Field\Version` block and the unused `Hint::getPxParams()`
+- `ConfigProvider::getUserHash()` (replaced by `Service\ReporterToken`) and the unused `State` dependency of the widget blocks
+- GitHub Actions workflow (`m2-test`): it could no longer install Magento 2.4.6 and failed on every push
+
+### Fixed
+- Admin **Add IP Address** button: the "already in the list" check matched any line containing the address (`1.2.3.4` was found in `11.2.3.45`), so it now compares whole lines. It also says when your address can't be found instead of adding a blank line, and its label and messages can be translated
+- Default config for the admin widget was stored under `admin` instead of `backend`
+- Full page cache: the IP whitelist decision and the logged-in customer's details were rendered into cached storefront pages, so whichever visitor loaded a page first decided whether everyone saw the widget (and with whose details). The cached page now only depends on store settings. When the IP whitelist or "Capture User Data" is on, a small loader asks the new uncached `feedbucket/widget/config` endpoint per visitor, and the widget key is no longer in public pages
+- An enabled module with no Secret threw a TypeError on every page. The widget is now left out until a Secret is entered
+- Storefront "Capture User Data" sent the customer's ID number to Feedbucket as their name
+- Settings saved at website or store view scope were ignored: the module only read the Default Config values. The storefront now uses the current store view's settings
+- IP whitelist: only the last line of the list could match, because the admin saves lines with CRLF and the lines weren't trimmed. Blank lines and spaces are now ignored too
+- IP whitelist: a CIDR entry (e.g. `10.0.0.0/8`) after a plain address was never checked
+
+### Security
+- Admin **Add IP Address** button: its script is output through `SecureHtmlRenderer` and the address and messages are JSON-encoded, instead of being placed into the script as they were
+- The widget script is output through Magento's `SecureHtmlRenderer`, so Magento 2.4.7+ can allow it under the strict checkout Content Security Policy, and the reporter details and key are JSON-encoded so a name containing `</script>` or quotes can't break out of the script
+- The reporter token was an HMAC of the user's name and email keyed with the widget key, which is printed in every page, so anyone who knew a user's name and email could compute it and see that user's feedback. It is now an HMAC of the user type and ID keyed with the installation's encryption key. Reporters who used "user feedback" mode before this release get a new token, so their earlier feedback is no longer shown to them
 
 ## [v400.1.0] - 2026-11-13
 ### Changed

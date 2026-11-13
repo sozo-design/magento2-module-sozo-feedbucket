@@ -13,81 +13,78 @@
  * @package     Sozo_Feedbucket
  * @copyright   Copyright (c) SOZO Design Ltd (https://sozodesign.co.uk)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
- */
-
-declare(strict_types=1);
+ */declare(strict_types=1);
 
 namespace Sozo\Feedbucket\Block;
 
-use Sozo\Feedbucket\Model\ConfigProvider;
-use Sozo\Feedbucket\Service\IpCheckerService;
-use Magento\Customer\Model\SessionFactory;
-use Magento\Framework\App\State;
-use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Exception\NoSuchEntityException;
+use Magento\Framework\View\Element\Template;
 use Magento\Framework\View\Element\Template\Context;
+use Sozo\Feedbucket\Service\StorefrontWidget;
 
-class Frontend extends Display
+/**
+ * Storefront widget loader
+ *
+ * The page output depends only on store settings, so it is safe in the full page cache. When the
+ * IP whitelist or "Capture User Data" is on, the page only carries a small loader that asks the
+ * uncached feedbucket/widget/config endpoint whether this visitor gets the widget.
+ */
+class Frontend extends Template
 {
+    private const JSON_FLAGS = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
+
     /**
-     * @var SessionFactory
+     * Seconds a visitor's "no reporter details" answer is reused (sessionStorage)
      */
-    private $customerSession;
+    private const CACHE_SECONDS = 600;
+
+    /**
+     * @var StorefrontWidget
+     */
+    private $storefrontWidget;
 
     /**
      * @param Context $context
-     * @param ConfigProvider $configProvider
-     * @param IpCheckerService $ipCheckerService
-     * @param State $state
-     * @param SessionFactory $customerSession
+     * @param StorefrontWidget $storefrontWidget
      * @param array $data
      */
-    public function __construct(
-        Context $context,
-        ConfigProvider $configProvider,
-        IpCheckerService $ipCheckerService,
-        State $state,
-        SessionFactory $customerSession,
-        array $data = []
-    ) {
-        parent::__construct($context, $configProvider, $ipCheckerService, $state, $data);
-        $this->customerSession = $customerSession;
+    public function __construct(Context $context, StorefrontWidget $storefrontWidget, array $data = [])
+    {
+        $this->storefrontWidget = $storefrontWidget;
+        parent::__construct($context, $data);
     }
 
     /**
-     * @inheritdoc
+     * Loader options as a JavaScript object literal
+     *
+     * Either the key and an empty config (no visitor check needed), or the endpoint URL.
      *
      * @return string
      */
-    public function _toHtml(): string
+    public function getJsonLoaderOptions(): string
     {
-        if ($this->configProvider->isFrontendEnabled()) {
-            return parent::_toHtml();
+        if ($this->storefrontWidget->needsVisitorCheck()) {
+            $options = [
+                'url' => $this->getUrl('feedbucket/widget/config', ['_secure' => $this->getRequest()->isSecure()]),
+                'cacheSeconds' => $this->storefrontWidget->needsReporter() ? 0 : self::CACHE_SECONDS,
+            ];
+        } else {
+            $options = ['key' => $this->storefrontWidget->getKey()];
         }
 
-        return '';
+        return (string)json_encode($options, self::JSON_FLAGS);
     }
 
     /**
      * @inheritdoc
-     *
-     * @throws NoSuchEntityException
-     * @throws LocalizedException
      */
-    public function prepareConfig(): array
+    protected function _toHtml(): string
     {
-        $config = parent::prepareConfig();
-        $customerSession = $this->customerSession->create();
-        if ($customerSession->isLoggedIn() && $this->configProvider->isFrontendCaptureUserData()) {
-            $customer = $customerSession->getCustomer();
-            $config['reporter'] = [
-                'name' => $customer->getId(),
-                'email' => $customer->getEmail()
-            ];
-
-            $config['reporter']['token'] = $this->configProvider->getUserHash($config['reporter']);
+        if (!$this->storefrontWidget->isActive()
+            || $this->storefrontWidget->isHiddenOn((string)$this->getRequest()->getFullActionName())
+        ) {
+            return '';
         }
 
-        return $this->jsConfig = array_merge($this->jsConfig, $config);
+        return parent::_toHtml();
     }
 }

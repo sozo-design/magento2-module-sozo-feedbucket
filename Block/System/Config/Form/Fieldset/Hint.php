@@ -13,110 +13,18 @@
  * @package     Sozo_Feedbucket
  * @copyright   Copyright (c) SOZO Design Ltd (https://sozodesign.co.uk)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
- */
-
-declare(strict_types=1);
+ */declare(strict_types=1);
 
 namespace Sozo\Feedbucket\Block\System\Config\Form\Fieldset;
 
-use Sozo\Feedbucket\Model\ConfigProvider;
-use Magento\Backend\Block\Template;
-use Magento\Backend\Block\Template\Context;
-use Magento\Framework\App\ProductMetadataInterface;
-use Magento\Framework\Data\Form\Element\AbstractElement;
-use Magento\Framework\Data\Form\Element\Renderer\RendererInterface;
-use Magento\Framework\Exception\LocalizedException;
-use Magento\Framework\Module\ModuleList\Loader;
+use Sozo\Core\Block\System\Config\Form\Fieldset\AbstractHint;
 
-class Hint extends Template implements RendererInterface
+/**
+ * The SOZO panel at the top of the Feedbucket configuration, from Sozo_Core.
+ */
+class Hint extends AbstractHint
 {
-    /**
-     * @var ConfigProvider
-     */
-    protected $configProvider;
+    protected string $moduleCode = 'Sozo_Feedbucket';
 
-    /**
-     * @var string
-     */
-    protected $_template = 'Sozo_Feedbucket::system/config/fieldset/hint.phtml';
-
-    /**
-     * @var ProductMetadataInterface
-     */
-    protected $metaData;
-
-    /**
-     * @var Loader
-     */
-    protected $loader;
-
-    /**
-     * Hint constructor.
-     *
-     * @param Context $context
-     * @param ProductMetadataInterface $productMetaData
-     * @param Loader $loader
-     * @param ConfigProvider $configProvider
-     * @param array $data
-     */
-    public function __construct(
-        Context $context,
-        ProductMetadataInterface $productMetaData,
-        Loader $loader,
-        ConfigProvider $configProvider,
-        array $data = []
-    ) {
-        parent::__construct($context, $data);
-        $this->metaData = $productMetaData;
-        $this->loader = $loader;
-        $this->configProvider = $configProvider;
-    }
-
-    /**
-     * @inheritdoc
-     *
-     * @param AbstractElement $element
-     *
-     * @return string
-     */
-    public function render(AbstractElement $element): string
-    {
-        return $this->toHtml();
-    }
-
-    /**
-     * Used to confirm usage of the module (not used)
-     *
-     * @return string
-     * @throws LocalizedException
-     */
-    public function getPxParams(): string
-    {
-        $modules = $this->loader->load();
-        $v = $this->configProvider->getExtensionVersion();
-        $extension = "Feedbucket;{$v}";
-        $mageEdition = $this->metaData->getEdition();
-        switch ($mageEdition) {
-            case 'Community':
-                $mageEdition = 'CE';
-                break;
-            case 'Enterprise':
-                $mageEdition = 'EE';
-                break;
-        }
-        $mageVersion = $this->metaData->getVersion();
-        $mage = "Magento {$mageEdition};{$mageVersion}";
-        $hash = hash('sha256', $extension . '_' . $mage . '_' . $extension);
-        return "ext=$extension&mage={$mage}&ctrl={$hash}";
-    }
-
-    /**
-     * Retrieve the module version number
-     *
-     * @return string
-     */
-    public function getVersion(): string
-    {
-        return $this->configProvider->getExtensionVersion();
-    }
+    protected string $moduleName = 'SOZO Feedbucket';
 }

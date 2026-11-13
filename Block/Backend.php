@@ -21,8 +21,9 @@ namespace Sozo\Feedbucket\Block;
 
 use Sozo\Feedbucket\Model\ConfigProvider;
 use Sozo\Feedbucket\Service\IpCheckerService;
+use Sozo\Feedbucket\Service\PageFilter;
+use Sozo\Feedbucket\Service\ReporterToken;
 use Magento\Backend\Model\Auth\Session;
-use Magento\Framework\App\State;
 use Magento\Framework\View\Element\Template\Context;
 
 class Backend extends Display
@@ -33,23 +34,31 @@ class Backend extends Display
     private $authSession;
 
     /**
+     * @var PageFilter
+     */
+    private $pageFilter;
+
+    /**
      * @param Context $context
      * @param ConfigProvider $configProvider
      * @param IpCheckerService $ipCheckerService
-     * @param State $state
+     * @param ReporterToken $reporterToken
      * @param Session $authSession
+     * @param PageFilter $pageFilter
      * @param array $data
      */
     public function __construct(
         Context $context,
         ConfigProvider $configProvider,
         IpCheckerService $ipCheckerService,
-        State $state,
+        ReporterToken $reporterToken,
         Session $authSession,
+        PageFilter $pageFilter,
         array $data = []
     ) {
-        parent::__construct($context, $configProvider, $ipCheckerService, $state, $data);
+        parent::__construct($context, $configProvider, $ipCheckerService, $reporterToken, $data);
         $this->authSession = $authSession;
+        $this->pageFilter = $pageFilter;
     }
 
     /**
@@ -76,7 +85,10 @@ class Backend extends Display
                 'email' => $this->getCurrentUser()->getEmail(),
             ];
 
-            $config['reporter']['token'] = $this->configProvider->getUserHash($config['reporter']);
+            $token = $this->reporterToken->forUser(ReporterToken::TYPE_ADMIN, $this->getCurrentUser()->getId());
+            if ($token !== '') {
+                $config['reporter']['token'] = $token;
+            }
         }
 
         return $this->jsConfig = array_merge($this->jsConfig, $config);
@@ -84,15 +96,26 @@ class Backend extends Display
 
     /**
      * @inheritdoc
-     *
-     * @return string
      */
-    public function _toHtml(): string
+    protected function canShow(): bool
     {
-        if ($this->configProvider->isBackendEnabled()) {
-            return parent::_toHtml();
+        return $this->configProvider->isBackendEnabled()
+            && !$this->isHiddenPage()
+            && parent::canShow();
+    }
+
+    /**
+     * Is the widget kept off this admin page (personal data pages, plus the "Also Hide on Pages" list)
+     *
+     * @return bool
+     */
+    private function isHiddenPage(): bool
+    {
+        $rules = $this->pageFilter->parseList($this->configProvider->getBackendHiddenPages());
+        if ($this->configProvider->isBackendHiddenOnPersonalData()) {
+            $rules = array_merge(PageFilter::ADMIN_PERSONAL_DATA_PAGES, $rules);
         }
 
-        return '';
+        return $this->pageFilter->isHidden((string)$this->getRequest()->getFullActionName(), $rules);
     }
 }

@@ -25,11 +25,16 @@
             <frontend>
                 <enabled>0</enabled>
                 <capture_user_data>0</capture_user_data>
+                <hide_on_checkout>1</hide_on_checkout>
+                <hide_on_account>1</hide_on_account>
+                <hidden_pages></hidden_pages>
             </frontend>
-            <admin>
+            <backend>
                 <enabled>0</enabled>
                 <capture_user_data>0</capture_user_data>
-            </admin>
+                <hide_on_personal_data>1</hide_on_personal_data>
+                <hidden_pages></hidden_pages>
+            </backend>
             <ip_whitelist>
                 <enabled>0</enabled>
                 <whitelist></whitelist>

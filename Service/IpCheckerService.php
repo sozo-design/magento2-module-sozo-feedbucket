@@ -21,37 +21,46 @@ namespace Sozo\Feedbucket\Service;
 
 use Sozo\Feedbucket\Model\ConfigProvider;
 use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
+use Psr\Log\LoggerInterface;
 
 class IpCheckerService
 {
-    /**
-     * @var array
-     */
-    protected $whitelist;
-
     /**
      * @var ConfigProvider
      */
     protected $configProvider;
 
     /**
-     * @var string
+     * @var RemoteAddress
      */
-    protected $ipAddress;
+    private $remoteAddress;
+
+    /**
+     * @var IpMatcher
+     */
+    private $ipMatcher;
+
+    /**
+     * @var LoggerInterface
+     */
+    private $logger;
 
     /**
      * @param ConfigProvider $configProvider
      * @param RemoteAddress $remoteAddress
+     * @param IpMatcher $ipMatcher
+     * @param LoggerInterface $logger Sozo_Feedbucket channel of the SOZO log (etc/di.xml)
      */
-    public function __construct(ConfigProvider $configProvider, RemoteAddress $remoteAddress)
-    {
+    public function __construct(
+        ConfigProvider $configProvider,
+        RemoteAddress $remoteAddress,
+        IpMatcher $ipMatcher,
+        LoggerInterface $logger
+    ) {
         $this->configProvider = $configProvider;
-
-        $whitelist = $this->configProvider->getWhitelist();
-        $whitelist = explode("\n", $whitelist);
-        $this->whitelist = $whitelist;
-
-        $this->ipAddress = $remoteAddress->getRemoteAddress();
+        $this->remoteAddress = $remoteAddress;
+        $this->ipMatcher = $ipMatcher;
+        $this->logger = $logger;
     }
 
     /**
@@ -61,121 +70,29 @@ class IpCheckerService
      */
     public function checkAllowed(): bool
     {
-        if (!(bool)$this->configProvider->getWhitelistEnabled()) {
+        if (!$this->configProvider->getWhitelistEnabled()) {
             return true;
         }
 
-        return $this->isInWhitelist();
-    }
+        $ipAddress = (string)$this->remoteAddress->getRemoteAddress();
+        $entries = $this->ipMatcher->parseList($this->configProvider->getWhitelist());
 
-    /**
-     * Check if the current IP is whitelisted
-     *
-     * @return bool
-     */
-    protected function isInWhitelist(): bool
-    {
-        if ($this->isExactMatch() || $this->isNetmaskMatch() || $this->isRangeMatch()) {
-            return true;
-        }
+        $allowed = $this->ipMatcher->isAllowed($ipAddress, $entries);
 
-        return false;
-    }
-
-    /**
-     * Check if the current IP is in the whitelist
-     *
-     * @return bool
-     */
-    protected function isExactMatch(): bool
-    {
-        return in_array($this->ipAddress, $this->whitelist);
-    }
-
-    /**
-     * Check if IP has a match to a whitelisted IP with netmask
-     *
-     * Credits to Paul Gregg (https://pgregg.com/projects/php/ip_in_range/ip_in_range.phps)
-     *
-     * @return bool
-     */
-    protected function isNetmaskMatch(): bool
-    {
-        foreach ($this->whitelist as $ipRange) {
-            if (strpos($ipRange, '/') === false) {
-                return false;
-            }
-
-            list($ipRange, $netmask) = explode('/', $ipRange, 2);
-            if (strpos($netmask, '.') !== false) {
-                // $netmask is a 255.255.0.0 format
-                $netmask = str_replace('*', '0', $netmask);
-                $decimalNetmask = ip2long($netmask);
-
-                if ((ip2long($this->ipAddress) & $decimalNetmask) == (ip2long($ipRange) & $decimalNetmask)) {
-                    return true;
-                }
-            } else {
-                // $netmask is a CIDR size block
-                // fix the range argument
-                $x = explode('.', $ipRange);
-                while (count($x) < 4) {
-                    $x[] = '0';
-                }
-                list($a, $b, $c, $d) = $x;
-                $ipRange = sprintf(
-                    "%u.%u.%u.%u",
-                    empty($a) ? '0' : $a,
-                    empty($b) ? '0' : $b,
-                    empty($c) ? '0' : $c,
-                    empty($d) ? '0' : $d
-                );
-                $decimalIpRange = ip2long($ipRange);
-                $decimalIpAddress = ip2long($this->ipAddress);
-
-                $decimalWildcard = pow(2, (32 - $netmask)) - 1;
-                $decimalNetmask = ~$decimalWildcard;
-
-                if (($decimalIpAddress & $decimalNetmask) == ($decimalIpRange & $decimalNetmask)) {
-                    return true;
-                }
+        // Debug lines are only written in developer mode. No IP addresses: they are personal data.
+        $invalidLines = [];
+        foreach ($entries as $index => $entry) {
+            if (!$this->ipMatcher->isValidEntry($entry)) {
+                $invalidLines[] = $index + 1;
             }
         }
+        $this->logger->debug('IP whitelist checked', [
+            'allowed' => $allowed,
+            'entries' => count($entries),
+            'invalid_entry_lines' => $invalidLines,
+            'address_found' => $ipAddress !== '',
+        ]);
 
-        return false;
-    }
-
-    /**
-     * Check if IP has a match to a whitelisted IP with netmask
-     *
-     * Credits to Paul Gregg (https://pgregg.com/projects/php/ip_in_range/ip_in_range.phps)
-     *
-     * @return bool
-     */
-    protected function isRangeMatch(): bool
-    {
-        foreach ($this->whitelist as $ipRange) {
-            // Check if IP is in A.B.*.* format
-            if (strpos($ipRange, '*') !== false) {
-                // Just convert to A-B format by setting * to 0 for A and 255 for B
-                $lowerIpAddress = str_replace('*', '0', $ipRange);
-                $upperIpAddress = str_replace('*', '255', $ipRange);
-                $ipRange = $lowerIpAddress . '-' . $upperIpAddress;
-            }
-
-            // Check if IP is in A-B format
-            if (strpos($ipRange, '-') !== false) { // A-B format
-                list($lowerIpAddress, $upperIpAddress) = explode('-', $ipRange, 2);
-                $decimalLowerIpAddress = (float)sprintf("%u", ip2long($lowerIpAddress));
-                $decimalUpperIpAddress = (float)sprintf("%u", ip2long($upperIpAddress));
-                $decimalIpAddress = (float)sprintf("%u", ip2long($this->ipAddress));
-
-                if (($decimalIpAddress >= $decimalLowerIpAddress) && ($decimalIpAddress <= $decimalUpperIpAddress)) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        return $allowed;
     }
 }

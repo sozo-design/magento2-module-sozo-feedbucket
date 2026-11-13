@@ -15,19 +15,64 @@
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
  */
 
-// @codingStandardsIgnoreFile
-/* @var $block \Sozo\Feedbucket\Block\Frontend */
-/* @var $escaper \Magento\Framework\Escaper */
+/** @var \Sozo\Feedbucket\Block\Frontend $block */
+/** @var \Magento\Framework\View\Helper\SecureHtmlRenderer $secureRenderer */
+
+$script = '(function (options) {
+    function load(key, config) {
+        window.feedbucketConfig = config || {};
+        var s = document.createElement("script");
+        s.module = true;
+        s.defer = true;
+        s.src = "https://cdn.feedbucket.app/assets/feedbucket.js";
+        s.dataset.feedbucket = key;
+        document.head.appendChild(s);
+    }
+
+    if (options.key) {
+        load(options.key, {});
+        return;
+    }
+
+    var cacheKey = "sozo-feedbucket:" + options.url;
+    if (options.cacheSeconds > 0) {
+        try {
+            var cached = JSON.parse(window.sessionStorage.getItem(cacheKey) || "null");
+            if (cached && cached.expires > Date.now()) {
+                if (cached.allowed && cached.key) {
+                    load(cached.key, {});
+                }
+                return;
+            }
+        } catch (e) {}
+    }
+
+    if (!window.fetch) {
+        return;
+    }
+
+    window.fetch(options.url, {credentials: "same-origin", headers: {"Accept": "application/json"}})
+        .then(function (response) { return response.ok ? response.json() : null; })
+        .then(function (data) {
+            if (!data) {
+                return;
+            }
+            if (options.cacheSeconds > 0 && !data.reporter) {
+                try {
+                    window.sessionStorage.setItem(cacheKey, JSON.stringify({
+                        allowed: !!data.allowed,
+                        key: data.allowed ? data.key : "",
+                        expires: Date.now() + options.cacheSeconds * 1000
+                    }));
+                } catch (e) {}
+            }
+            if (data.allowed && data.key) {
+                load(data.key, data.config);
+            }
+        })
+        .catch(function () {});
+})(' . $block->getJsonLoaderOptions() . ');';
 ?>
-<!-- BEGIN FEEDBUCKET CODE {literal} -->
-<script>
-    window.feedbucketConfig = <?= $block->getJsConfig()?>
-</script>
-<script type="text/javascript">
-    (function(k) {
-        const s=document.createElement('script');s.module=true;s.defer=true;
-        s.src="https://cdn.feedbucket.app/assets/feedbucket.js";
-        s.dataset.feedbucket=k;document.head.appendChild(s);
-    })('<?= $escaper->escapeUrl($block->getSecret()); ?>')
-</script>
-<!-- {/literal} END FEEDBUCKET CODE -->
+<!-- BEGIN FEEDBUCKET CODE -->
+<?= /* @noEscape */ $secureRenderer->renderTag('script', ['type' => 'text/javascript'], $script, false) ?>
+<!-- END FEEDBUCKET CODE -->
