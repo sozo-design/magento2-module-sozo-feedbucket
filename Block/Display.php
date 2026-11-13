@@ -28,6 +28,11 @@ use Magento\Framework\View\Element\Template\Context;
 class Display extends Template
 {
     /**
+     * Encode values so they are safe inside an inline script (no </script>, quotes or &)
+     */
+    protected const JSON_FLAGS = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
+
+    /**
      * @var ConfigProvider
      */
     protected $configProvider;
@@ -95,7 +100,17 @@ class Display extends Template
     public function getJsConfig(): string
     {
         $this->prepareConfig();
-        return json_encode($this->jsConfig, JSON_FORCE_OBJECT);
+        return (string)json_encode($this->jsConfig, self::JSON_FLAGS | JSON_FORCE_OBJECT);
+    }
+
+    /**
+     * Return the widget key as a JavaScript string literal
+     *
+     * @return string
+     */
+    public function getJsonSecret(): string
+    {
+        return (string)json_encode($this->getSecret(), self::JSON_FLAGS);
     }
 
     /**
