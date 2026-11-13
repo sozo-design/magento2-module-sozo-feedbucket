@@ -25,16 +25,16 @@ use Magento\Config\Block\System\Config\Form\Field;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
-use Magento\Framework\View\Helper\Js as JsHelper;
+use Magento\Framework\View\Helper\SecureHtmlRenderer;
 
+/**
+ * "Add IP Address" button: adds the admin user's current IP address to the IP Whitelist field
+ */
 class IpButton extends Field
 {
     protected const WHITELIST_DOM_ID = 'sozo_feedbucket_ip_whitelist_whitelist';
 
-    /**
-     * @var JsHelper
-     */
-    protected $jsHelper;
+    private const JSON_FLAGS = JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT;
 
     /**
      * @var RemoteAddress
@@ -42,15 +42,24 @@ class IpButton extends Field
     private $remoteAddress;
 
     /**
+     * @var SecureHtmlRenderer
+     */
+    private $secureRenderer;
+
+    /**
      * @param Context $context
-     * @param JsHelper $jsHelper
      * @param RemoteAddress $remoteAddress
+     * @param SecureHtmlRenderer $secureRenderer
      * @param array $data
      */
-    public function __construct(Context $context, JsHelper $jsHelper, RemoteAddress $remoteAddress, array $data = [])
-    {
-        $this->jsHelper = $jsHelper;
+    public function __construct(
+        Context $context,
+        RemoteAddress $remoteAddress,
+        SecureHtmlRenderer $secureRenderer,
+        array $data = []
+    ) {
         $this->remoteAddress = $remoteAddress;
+        $this->secureRenderer = $secureRenderer;
 
         parent::__construct($context, $data);
     }
@@ -63,9 +72,7 @@ class IpButton extends Field
      */
     public function render(AbstractElement $element): string
     {
-        $html = parent::render($element);
-
-        return $html . $this->_getAdditionalJs($element);
+        return parent::render($element) . $this->getButtonScript($element);
     }
 
     /**
@@ -81,7 +88,8 @@ class IpButton extends Field
 
         $button->setData([
             'id' => $element->getHtmlId(),
-            'label' => 'Add IP Address'
+            'label' => __('Add IP Address'),
+            'type' => 'button',
         ]);
 
         return $button->toHtml();
@@ -98,44 +106,74 @@ class IpButton extends Field
     }
 
     /**
-     * Return the current IP address of the user
+     * Return the current IP address of the user, or an empty string when it can't be found
      *
-     * @return false|string
+     * @return string
      */
-    public function getCurrentIpAddress()
+    public function getCurrentIpAddress(): string
     {
-        return $this->remoteAddress->getRemoteAddress();
+        return (string)$this->remoteAddress->getRemoteAddress();
     }
 
     /**
-     * Build the button for inclusion
+     * Script that adds the current IP address to the whitelist, once
      *
      * @param AbstractElement $element
      * @return string
      */
-    protected function _getAdditionalJs(AbstractElement $element): string
+    protected function getButtonScript(AbstractElement $element): string
     {
-        $output = <<<JS
-            require(['jquery'], function($) {
-                $(function() {
-                    var button = $('#{$element->getHtmlId()}');
-                    var currentIp = '{$this->getCurrentIpAddress()}';
-                    var whitelist = $('#{$this->getWhitelistDOMId()}');
+        $options = (string)json_encode([
+            'buttonId' => $element->getHtmlId(),
+            'listId' => $this->getWhitelistDOMId(),
+            'ip' => $this->getCurrentIpAddress(),
+            'messages' => [
+                'exists' => (string)__('Your IP address (%1) is already in the list.', $this->getCurrentIpAddress()),
+                'noIp' => (string)__('Your IP address could not be found.'),
+            ],
+        ], self::JSON_FLAGS);
 
-                    button.on('click', function(){
-                        if (whitelist.val().includes(currentIp)) {
-                            alert('That IP Address is already in the list!');
-                        } else if (!whitelist.val()) {
-                            whitelist.val(currentIp);
-                        } else {
-                            var existing = whitelist.val();
-                            whitelist.val(existing + "\\n" + currentIp);
-                        }
-                    });
-                });
+        $script = <<<JS
+(function (options) {
+    function init() {
+        var button = document.getElementById(options.buttonId);
+        var list = document.getElementById(options.listId);
+        if (!button || !list) {
+            return;
+        }
+
+        button.addEventListener('click', function (event) {
+            event.preventDefault();
+            if (!options.ip) {
+                window.alert(options.messages.noIp);
+                return;
+            }
+
+            var lines = list.value.split(/\\r?\\n/).map(function (line) {
+                return line.trim();
+            }).filter(function (line) {
+                return line !== '';
             });
+
+            if (lines.indexOf(options.ip) !== -1) {
+                window.alert(options.messages.exists);
+                return;
+            }
+
+            lines.push(options.ip);
+            list.value = lines.join('\\n');
+            list.dispatchEvent(new Event('change', {bubbles: true}));
+        });
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})({$options});
 JS;
 
-        return $this->jsHelper->getScript($output);
+        return $this->secureRenderer->renderTag('script', ['type' => 'text/javascript'], $script, false);
     }
 }
