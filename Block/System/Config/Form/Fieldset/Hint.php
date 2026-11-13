@@ -13,65 +13,18 @@
  * @package     Sozo_Feedbucket
  * @copyright   Copyright (c) SOZO Design Ltd (https://sozodesign.co.uk)
  * @license     http://opensource.org/licenses/osl-3.0.php  Open Software License (OSL 3.0)
- */
-
-declare(strict_types=1);
+ */declare(strict_types=1);
 
 namespace Sozo\Feedbucket\Block\System\Config\Form\Fieldset;
 
-use Sozo\Feedbucket\Model\ConfigProvider;
-use Magento\Backend\Block\Template;
-use Magento\Backend\Block\Template\Context;
-use Magento\Framework\Data\Form\Element\AbstractElement;
-use Magento\Framework\Data\Form\Element\Renderer\RendererInterface;
+use Sozo\Core\Block\System\Config\Form\Fieldset\AbstractHint;
 
-class Hint extends Template implements RendererInterface
+/**
+ * The SOZO panel at the top of the Feedbucket configuration, from Sozo_Core.
+ */
+class Hint extends AbstractHint
 {
-    /**
-     * @var ConfigProvider
-     */
-    protected $configProvider;
+    protected string $moduleCode = 'Sozo_Feedbucket';
 
-    /**
-     * @var string
-     */
-    protected $_template = 'Sozo_Feedbucket::system/config/fieldset/hint.phtml';
-
-    /**
-     * Hint constructor.
-     *
-     * @param Context $context
-     * @param ConfigProvider $configProvider
-     * @param array $data
-     */
-    public function __construct(
-        Context $context,
-        ConfigProvider $configProvider,
-        array $data = []
-    ) {
-        parent::__construct($context, $data);
-        $this->configProvider = $configProvider;
-    }
-
-    /**
-     * @inheritdoc
-     *
-     * @param AbstractElement $element
-     *
-     * @return string
-     */
-    public function render(AbstractElement $element): string
-    {
-        return $this->toHtml();
-    }
-
-    /**
-     * Retrieve the module version number
-     *
-     * @return string
-     */
-    public function getVersion(): string
-    {
-        return $this->configProvider->getExtensionVersion();
-    }
+    protected string $moduleName = 'SOZO Feedbucket';
 }

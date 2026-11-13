@@ -19,12 +19,14 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Unit tests for the IP whitelist matching (`Test/Unit`)
 
 ### Changed
+- The SOZO panel at the top of the configuration now comes from Sozo_Core (`AbstractHint`), so it looks the same as every other SOZO module
 - composer.json lists the PHP versions (8.1 to 8.4) and Magento modules the module uses, plus `support.source`; module.xml loads it after Sozo_Core and those Magento modules
 - Admin help text says what "Capture User Data" actually sends (name and email), what the Secret is, and which IP whitelist formats work
 - Translation file only lists the strings the module uses
 - Backend Configuration settings can only be set at Default Config, the only scope the admin uses
 
 ### Removed
+- Feedbucket's own hint template, its admin styles and the unused `UpdatedLogo.png` (Sozo_Core provides the panel and its styles)
 - Unused `Block\System\Config\Form\Field\Version` block and the unused `Hint::getPxParams()`
 - `ConfigProvider::getUserHash()` (replaced by `Service\ReporterToken`) and the unused `State` dependency of the widget blocks
 - GitHub Actions workflow (`m2-test`): it could no longer install Magento 2.4.6 and failed on every push
