@@ -13,7 +13,7 @@
     "license": "OSL-3.0",
     "require": {
         "magento/framework": ">=103.0.3",
-        "sozodesign/magento2-module-sozo-core": "^401.0",
+        "sozodesign/magento2-module-sozo-core": "^401.0 || ^402.0",
         "ext-json": "*"
     },
     "autoload": {

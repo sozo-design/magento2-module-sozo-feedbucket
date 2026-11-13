@@ -52,7 +52,7 @@ class ConfigProvider extends ConfigProviderAbstract
      * @param int|null $storeId
      * @return bool
      */
-    public function isEnabled(int $storeId = null): bool
+    public function isEnabled(?int $storeId = null): bool
     {
         return $this->isSetFlag(self::CFG_FEEDBUCKET_ENABLED, $storeId);
     }
@@ -63,7 +63,7 @@ class ConfigProvider extends ConfigProviderAbstract
      * @param int|null $storeId
      * @return string
      */
-    public function getSecret(int $storeId = null): string
+    public function getSecret(?int $storeId = null): string
     {
         return $this->getValue(self::CFG_FEEDBUCKET_SECRET, $storeId);
     }
@@ -74,7 +74,7 @@ class ConfigProvider extends ConfigProviderAbstract
      * @param int|null $storeId
      * @return bool
      */
-    public function isFrontendEnabled(int $storeId = null): bool
+    public function isFrontendEnabled(?int $storeId = null): bool
     {
         return $this->isSetFlag(self::CFG_FEEDBUCKET_FRONTEND_ENABLED, $storeId);
     }
@@ -85,7 +85,7 @@ class ConfigProvider extends ConfigProviderAbstract
      * @param int|null $storeId
      * @return bool
      */
-    public function isFrontendCaptureUserData(int $storeId = null): bool
+    public function isFrontendCaptureUserData(?int $storeId = null): bool
     {
         return $this->isSetFlag(self::CFG_FEEDBUCKET_FRONTEND_CAPTURE_USER_DATA, $storeId);
     }
@@ -96,7 +96,7 @@ class ConfigProvider extends ConfigProviderAbstract
      * @param int|null $storeId
      * @return bool
      */
-    public function isBackendEnabled(int $storeId = null): bool
+    public function isBackendEnabled(?int $storeId = null): bool
     {
         return $this->isSetFlag(self::CFG_FEEDBUCKET_BACKEND_ENABLED, $storeId);
     }
@@ -107,7 +107,7 @@ class ConfigProvider extends ConfigProviderAbstract
      * @param int|null $storeId
      * @return bool
      */
-    public function isBackendCaptureUserData(int $storeId = null): bool
+    public function isBackendCaptureUserData(?int $storeId = null): bool
     {
         return $this->isSetFlag(self::CFG_FEEDBUCKET_BACKEND_CAPTURE_USER_DATA, $storeId);
     }
@@ -118,7 +118,7 @@ class ConfigProvider extends ConfigProviderAbstract
      * @param int|null $storeId
      * @return bool
      */
-    public function getWhitelistEnabled(int $storeId = null): bool
+    public function getWhitelistEnabled(?int $storeId = null): bool
     {
         return $this->isSetFlag(self::CFG_FEEDBUCKET_WHITELIST_ENABLED, $storeId);
     }
@@ -129,7 +129,7 @@ class ConfigProvider extends ConfigProviderAbstract
      * @param int|null $storeId
      * @return string
      */
-    public function getWhitelist(int $storeId = null): string
+    public function getWhitelist(?int $storeId = null): string
     {
         return ($this->getValue(self::CFG_FEEDBUCKET_WHITELIST_WHITELIST, $storeId) ?? '');
     }
