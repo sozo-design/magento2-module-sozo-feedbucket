@@ -20,6 +20,7 @@ namespace Sozo\Feedbucket\Service;
 
 use Magento\Framework\App\DeploymentConfig;
 use Magento\Framework\Config\ConfigOptionsListConstants;
+use Psr\Log\LoggerInterface;
 
 /**
  * Builds the Feedbucket reporter token
@@ -39,11 +40,18 @@ class ReporterToken
     private $deploymentConfig;
 
     /**
-     * @param DeploymentConfig $deploymentConfig
+     * @var LoggerInterface
      */
-    public function __construct(DeploymentConfig $deploymentConfig)
+    private $logger;
+
+    /**
+     * @param DeploymentConfig $deploymentConfig
+     * @param LoggerInterface $logger Sozo_Feedbucket channel of the SOZO log (etc/di.xml)
+     */
+    public function __construct(DeploymentConfig $deploymentConfig, LoggerInterface $logger)
     {
         $this->deploymentConfig = $deploymentConfig;
+        $this->logger = $logger;
     }
 
     /**
@@ -55,8 +63,17 @@ class ReporterToken
      */
     public function forUser(string $type, $userId): string
     {
+        if ((string)$userId === '') {
+            return '';
+        }
+
         $key = $this->getKey();
-        if ($key === '' || (string)$userId === '') {
+        if ($key === '') {
+            $this->logger->warning(
+                'Reporter token not added: no encryption key (crypt/key) found in app/etc/env.php',
+                ['type' => $type]
+            );
+
             return '';
         }
 

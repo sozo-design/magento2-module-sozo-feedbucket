@@ -21,6 +21,7 @@ namespace Sozo\Feedbucket\Service;
 
 use Sozo\Feedbucket\Model\ConfigProvider;
 use Magento\Framework\HTTP\PhpEnvironment\RemoteAddress;
+use Psr\Log\LoggerInterface;
 
 class IpCheckerService
 {
@@ -40,15 +41,26 @@ class IpCheckerService
     private $ipMatcher;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @param ConfigProvider $configProvider
      * @param RemoteAddress $remoteAddress
      * @param IpMatcher $ipMatcher
+     * @param LoggerInterface $logger Sozo_Feedbucket channel of the SOZO log (etc/di.xml)
      */
-    public function __construct(ConfigProvider $configProvider, RemoteAddress $remoteAddress, IpMatcher $ipMatcher)
-    {
+    public function __construct(
+        ConfigProvider $configProvider,
+        RemoteAddress $remoteAddress,
+        IpMatcher $ipMatcher,
+        LoggerInterface $logger
+    ) {
         $this->configProvider = $configProvider;
         $this->remoteAddress = $remoteAddress;
         $this->ipMatcher = $ipMatcher;
+        $this->logger = $logger;
     }
 
     /**
@@ -65,6 +77,22 @@ class IpCheckerService
         $ipAddress = (string)$this->remoteAddress->getRemoteAddress();
         $entries = $this->ipMatcher->parseList($this->configProvider->getWhitelist());
 
-        return $this->ipMatcher->isAllowed($ipAddress, $entries);
+        $allowed = $this->ipMatcher->isAllowed($ipAddress, $entries);
+
+        // Debug lines are only written in developer mode. No IP addresses: they are personal data.
+        $invalidLines = [];
+        foreach ($entries as $index => $entry) {
+            if (!$this->ipMatcher->isValidEntry($entry)) {
+                $invalidLines[] = $index + 1;
+            }
+        }
+        $this->logger->debug('IP whitelist checked', [
+            'allowed' => $allowed,
+            'entries' => count($entries),
+            'invalid_entry_lines' => $invalidLines,
+            'address_found' => $ipAddress !== '',
+        ]);
+
+        return $allowed;
     }
 }

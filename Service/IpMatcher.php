@@ -71,6 +71,51 @@ class IpMatcher
     }
 
     /**
+     * Is the entry in a format the matcher understands
+     *
+     * @param string $entry
+     * @return bool
+     */
+    public function isValidEntry(string $entry): bool
+    {
+        $entry = trim($entry);
+        if ($entry === '') {
+            return false;
+        }
+
+        if (strpos($entry, '/') !== false) {
+            [$network, $mask] = array_map('trim', explode('/', $entry, 2));
+            if (strpos($mask, '.') !== false) {
+                return strpos($network, ':') === false
+                    && @inet_pton($this->padIpv4($network)) !== false
+                    && $this->netmaskToPrefix(str_replace('*', '0', $mask)) !== null;
+            }
+
+            if (!ctype_digit($mask)) {
+                return false;
+            }
+
+            if (strpos($network, ':') !== false) {
+                return @inet_pton($network) !== false && (int)$mask <= 128;
+            }
+
+            return @inet_pton($this->padIpv4($network)) !== false && (int)$mask <= 32;
+        }
+
+        if (strpos($entry, '*') !== false) {
+            return ip2long(str_replace('*', '0', $entry)) !== false;
+        }
+
+        if (strpos($entry, '-') !== false) {
+            [$lower, $upper] = array_map('trim', explode('-', $entry, 2));
+
+            return ip2long($lower) !== false && ip2long($upper) !== false;
+        }
+
+        return @inet_pton($entry) !== false;
+    }
+
+    /**
      * Does the IP address match one entry
      *
      * @param string $ipAddress

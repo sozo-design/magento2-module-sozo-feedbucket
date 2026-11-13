@@ -107,6 +107,35 @@ class IpMatcherTest extends TestCase
         ];
     }
 
+    /**
+     * @dataProvider validEntryProvider
+     */
+    public function testIsValidEntry(string $entry, bool $expected): void
+    {
+        $this->assertSame($expected, $this->matcher->isValidEntry($entry));
+    }
+
+    public static function validEntryProvider(): array
+    {
+        return [
+            'ipv4' => ['203.0.113.7', true],
+            'ipv6' => ['2001:db8::1', true],
+            'cidr' => ['10.0.0.0/8', true],
+            'short cidr' => ['10/8', true],
+            'ipv6 cidr' => ['2001:db8::/32', true],
+            'netmask' => ['192.168.1.0/255.255.255.0', true],
+            'wildcard' => ['192.168.*.*', true],
+            'range' => ['10.0.0.10-10.0.0.20', true],
+            'text' => ['office', false],
+            'cidr too big' => ['10.0.0.0/33', false],
+            'ipv6 cidr too big' => ['2001:db8::/129', false],
+            'bad netmask' => ['10.0.0.0/255.0.255.0', false],
+            'bad range' => ['10.0.0.10-nope', false],
+            'out of range octet' => ['300.1.1.1', false],
+            'empty' => ['', false],
+        ];
+    }
+
     public function testInvalidOrEmptyAddressIsNeverAllowed(): void
     {
         $this->assertFalse($this->matcher->isAllowed('', ['0.0.0.0/0']));

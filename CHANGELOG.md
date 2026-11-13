@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
+- Logging to the shared SOZO log (`var/log/sozo/core.log`, channel `Sozo_Feedbucket`, from Sozo_Core 402): a debug line per IP whitelist check (developer mode only; entry count, invalid entry line numbers and the result, no IP addresses) and a warning when a reporter token can't be made because there is no encryption key
 - `GET /feedbucket/widget/config` (never cached): whether the current visitor gets the storefront widget, its key and reporter details. Answers without reporter details are reused for 10 minutes per browser session
 - IP whitelist: IPv6 addresses and CIDR ranges
 - Unit tests for the IP whitelist matching (`Test/Unit`)
