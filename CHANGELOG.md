@@ -14,6 +14,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [v400.1.0] - 2026-11-13
+### Changed
+- Allow sozodesign/magento2-module-sozo-core v402 (`^401.0 || ^402.0`), so Feedbucket can be installed alongside Sozo_Imagify v401. No code changes were needed: the Core classes, menu parent and image Feedbucket uses are unchanged in v402
+
+### Fixed
+- PHP 8.4: implicitly nullable `$storeId` parameters in `ConfigProvider` raised deprecation notices (which break admin pages in developer mode)
+
 ## [v400.0.0] - 2023-11-23
 ### Added
 - Initial release
