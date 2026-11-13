@@ -81,7 +81,7 @@ class Frontend extends Display
         if ($customerSession->isLoggedIn() && $this->configProvider->isFrontendCaptureUserData()) {
             $customer = $customerSession->getCustomer();
             $config['reporter'] = [
-                'name' => $customer->getId(),
+                'name' => $customer->getName(),
                 'email' => $customer->getEmail()
             ];
 
