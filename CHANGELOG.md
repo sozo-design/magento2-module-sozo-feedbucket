@@ -13,6 +13,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 * [Security] in case of vulnerabilities.
 
 ## [Unreleased]
+### Fixed
+- IP whitelist: only the last line of the list could match, because the admin saves lines with CRLF and the lines weren't trimmed. Blank lines and spaces are now ignored too
+- IP whitelist: a CIDR entry (e.g. `10.0.0.0/8`) after a plain address was never checked
+
+### Added
+- IP whitelist: IPv6 addresses and CIDR ranges
+- Unit tests for the IP whitelist matching (`Test/Unit`)
 ### Removed
 - GitHub Actions workflow (`m2-test`): it could no longer install Magento 2.4.6 and failed on every push
 
