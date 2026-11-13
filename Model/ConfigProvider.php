@@ -19,6 +19,7 @@ declare(strict_types=1);
 
 namespace Sozo\Feedbucket\Model;
 
+use Magento\Store\Model\ScopeInterface;
 use Sozo\Core\Model\ConfigProviderAbstract;
 
 class ConfigProvider extends ConfigProviderAbstract
@@ -54,7 +55,7 @@ class ConfigProvider extends ConfigProviderAbstract
      */
     public function isEnabled(?int $storeId = null): bool
     {
-        return $this->isSetFlag(self::CFG_FEEDBUCKET_ENABLED, $storeId);
+        return $this->isSetFlag(self::CFG_FEEDBUCKET_ENABLED, $storeId, ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -65,7 +66,7 @@ class ConfigProvider extends ConfigProviderAbstract
      */
     public function getSecret(?int $storeId = null): string
     {
-        return $this->getValue(self::CFG_FEEDBUCKET_SECRET, $storeId);
+        return $this->getValue(self::CFG_FEEDBUCKET_SECRET, $storeId, ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -76,7 +77,7 @@ class ConfigProvider extends ConfigProviderAbstract
      */
     public function isFrontendEnabled(?int $storeId = null): bool
     {
-        return $this->isSetFlag(self::CFG_FEEDBUCKET_FRONTEND_ENABLED, $storeId);
+        return $this->isSetFlag(self::CFG_FEEDBUCKET_FRONTEND_ENABLED, $storeId, ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -87,7 +88,7 @@ class ConfigProvider extends ConfigProviderAbstract
      */
     public function isFrontendCaptureUserData(?int $storeId = null): bool
     {
-        return $this->isSetFlag(self::CFG_FEEDBUCKET_FRONTEND_CAPTURE_USER_DATA, $storeId);
+        return $this->isSetFlag(self::CFG_FEEDBUCKET_FRONTEND_CAPTURE_USER_DATA, $storeId, ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -98,7 +99,7 @@ class ConfigProvider extends ConfigProviderAbstract
      */
     public function isBackendEnabled(?int $storeId = null): bool
     {
-        return $this->isSetFlag(self::CFG_FEEDBUCKET_BACKEND_ENABLED, $storeId);
+        return $this->isSetFlag(self::CFG_FEEDBUCKET_BACKEND_ENABLED, $storeId, ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -109,7 +110,7 @@ class ConfigProvider extends ConfigProviderAbstract
      */
     public function isBackendCaptureUserData(?int $storeId = null): bool
     {
-        return $this->isSetFlag(self::CFG_FEEDBUCKET_BACKEND_CAPTURE_USER_DATA, $storeId);
+        return $this->isSetFlag(self::CFG_FEEDBUCKET_BACKEND_CAPTURE_USER_DATA, $storeId, ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -120,7 +121,7 @@ class ConfigProvider extends ConfigProviderAbstract
      */
     public function getWhitelistEnabled(?int $storeId = null): bool
     {
-        return $this->isSetFlag(self::CFG_FEEDBUCKET_WHITELIST_ENABLED, $storeId);
+        return $this->isSetFlag(self::CFG_FEEDBUCKET_WHITELIST_ENABLED, $storeId, ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -131,7 +132,7 @@ class ConfigProvider extends ConfigProviderAbstract
      */
     public function getWhitelist(?int $storeId = null): string
     {
-        return ($this->getValue(self::CFG_FEEDBUCKET_WHITELIST_WHITELIST, $storeId) ?? '');
+        return ($this->getValue(self::CFG_FEEDBUCKET_WHITELIST_WHITELIST, $storeId, ScopeInterface::SCOPE_STORE) ?? '');
     }
 
     /**
