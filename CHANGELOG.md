@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 ### Added
+- Frontend **Hide on Checkout?** (on by default): keeps the widget off the checkout, multishipping, PayPal/Braintree review, one-step checkout and order confirmation pages, because PCI DSS 4.0 (6.4.3) expects every script on a payment page to be listed and justified. The basket still shows it
+- Frontend **Also Hide on Pages**: more pages to keep the widget off, by full action name (`prefix*` allowed), e.g. a third-party checkout on its own route
 - Documentation page in SOZO's Outline, linked from composer.json `support.docs` (shown as Documentation in the SOZO Design admin menu)
 - Logging to the shared SOZO log (`var/log/sozo/core.log`, channel `Sozo_Feedbucket`, from Sozo_Core 402): a debug line per IP whitelist check (developer mode only; entry count, invalid entry line numbers and the result, no IP addresses) and a warning when a reporter token can't be made because there is no encryption key
 - `GET /feedbucket/widget/config` (never cached): whether the current visitor gets the storefront widget, its key and reporter details. Answers without reporter details are reused for 10 minutes per browser session

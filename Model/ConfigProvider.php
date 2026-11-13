@@ -40,6 +40,8 @@ class ConfigProvider extends ConfigProviderAbstract
 
     private const CFG_FEEDBUCKET_FRONTEND_ENABLED = 'frontend/enabled';
     private const CFG_FEEDBUCKET_FRONTEND_CAPTURE_USER_DATA = 'frontend/capture_user_data';
+    private const CFG_FEEDBUCKET_FRONTEND_HIDE_ON_CHECKOUT = 'frontend/hide_on_checkout';
+    private const CFG_FEEDBUCKET_FRONTEND_HIDDEN_PAGES = 'frontend/hidden_pages';
 
     private const CFG_FEEDBUCKET_BACKEND_ENABLED = 'backend/enabled';
     private const CFG_FEEDBUCKET_BACKEND_CAPTURE_USER_DATA = 'backend/capture_user_data';
@@ -89,6 +91,28 @@ class ConfigProvider extends ConfigProviderAbstract
     public function isFrontendCaptureUserData(?int $storeId = null): bool
     {
         return $this->isSetFlag(self::CFG_FEEDBUCKET_FRONTEND_CAPTURE_USER_DATA, $storeId, ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
+     * Keep the storefront widget off checkout and payment pages
+     *
+     * @param int|null $storeId
+     * @return bool
+     */
+    public function isFrontendHiddenOnCheckout(?int $storeId = null): bool
+    {
+        return $this->isSetFlag(self::CFG_FEEDBUCKET_FRONTEND_HIDE_ON_CHECKOUT, $storeId, ScopeInterface::SCOPE_STORE);
+    }
+
+    /**
+     * Extra storefront pages (full action names, one per line) the widget is kept off
+     *
+     * @param int|null $storeId
+     * @return string
+     */
+    public function getFrontendHiddenPages(?int $storeId = null): string
+    {
+        return (string)$this->getValue(self::CFG_FEEDBUCKET_FRONTEND_HIDDEN_PAGES, $storeId, ScopeInterface::SCOPE_STORE);
     }
 
     /**

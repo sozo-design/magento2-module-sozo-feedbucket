@@ -74,6 +74,31 @@
                         <field id="*/*/enabled">1</field>
                     </depends>
                 </field>
+
+                <field id="hide_on_checkout" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInStore="1" showInWebsite="1">
+                    <label>Hide on Checkout?</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[
+                        <p>Keeps the widget off the checkout, payment review and order confirmation pages (the basket still shows it). PCI DSS 4.0 expects every script on a payment page to be listed and justified, and a screenshot could capture payment details. Only set this to <strong>No</strong> on a test site.</p>
+                        ]]>
+                    </comment>
+                    <depends>
+                        <field id="*/*/enabled">1</field>
+                    </depends>
+                </field>
+
+                <field id="hidden_pages" translate="label comment" type="textarea" sortOrder="30" showInDefault="1" showInStore="1" showInWebsite="1">
+                    <label>Also Hide on Pages</label>
+                    <comment>
+                        <![CDATA[
+                        <p>Magento page names (full action names), one per line, e.g. <code>amasty_checkout_index_index</code>. End with <code>*</code> to match every page that starts with it, e.g. <code>mymodule_*</code>. Use this for third-party checkouts on their own route.</p>
+                        ]]>
+                    </comment>
+                    <depends>
+                        <field id="*/*/enabled">1</field>
+                    </depends>
+                </field>
             </group>
 
             <group id="backend" translate="label" sortOrder="16" showInDefault="1" showInWebsite="0" showInStore="0">

@@ -16,3 +16,5 @@
 "<p>Sends the logged-in admin user's name and email address to Feedbucket with their feedback, so they are named as the reporter and only see their own feedback. Set this to <strong>No</strong> to keep this information out of Feedbucket.</p>","<p>Sends the logged-in admin user's name and email address to Feedbucket with their feedback, so they are named as the reporter and only see their own feedback. Set this to <strong>No</strong> to keep this information out of Feedbucket.</p>"
 "Current IP will be added to whitelist","Current IP will be added to whitelist"
 "One entry per line: an address (IPv4 or IPv6), CIDR (<code>10.0.0.0/8</code>), address/netmask (<code>192.168.1.0/255.255.255.0</code>), wildcard (<code>192.168.*.*</code>) or range (<code>10.0.0.10-10.0.0.20</code>).","One entry per line: an address (IPv4 or IPv6), CIDR (<code>10.0.0.0/8</code>), address/netmask (<code>192.168.1.0/255.255.255.0</code>), wildcard (<code>192.168.*.*</code>) or range (<code>10.0.0.10-10.0.0.20</code>)."
+"Hide on Checkout?","Hide on Checkout?"
+"Also Hide on Pages","Also Hide on Pages"

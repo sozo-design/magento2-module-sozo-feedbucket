@@ -19,7 +19,7 @@ Full documentation (SOZO staff): https://sozodesign-co.getoutline.com/doc/feedbu
 | Setting | Scope | What it does |
 |---|---|---|
 | General > Enabled, Secret | Default, website, store view | Switches the module on and sets the widget key. With no key, nothing is output. |
-| Frontend Configuration | Default, website, store view | Shows the widget on the storefront. **Capture User Data** sends the logged-in customer's name and email to Feedbucket. |
+| Frontend Configuration | Default, website, store view | Shows the widget on the storefront. **Capture User Data** sends the logged-in customer's name and email to Feedbucket. **Hide on Checkout** (on by default) keeps it off checkout, payment review and order confirmation pages. **Also Hide on Pages** takes more page names (full action names, `prefix*` allowed). |
 | Backend Configuration | Default only | Shows the widget in the admin. **Capture User Data** sends the admin user's name and email. |
 | IP Whitelist | Default, website, store view | Only show the widget to listed addresses. One entry per line: an address (IPv4 or IPv6), CIDR (`10.0.0.0/8`, `2001:db8::/32`), address/netmask (`192.168.1.0/255.255.255.0`), wildcard (`192.168.*.*`) or range (`10.0.0.10-10.0.0.20`). |
 
@@ -54,10 +54,10 @@ These come from Sozo_Core 402:
 
 ## Tests
 
-Unit tests for the IP whitelist matching are in `Test/Unit`. They only need PHPUnit and `Service/IpMatcher.php`, so they run without Magento:
+Unit tests for the IP whitelist and page rules are in `Test/Unit`. They only need PHPUnit, so they run without Magento:
 
 ```bash
-phpunit --bootstrap Service/IpMatcher.php Test/Unit
+phpunit --bootstrap Test/Unit/bootstrap.php Test/Unit
 ```
 
 From a Magento project they also run with `dev/tests/unit/phpunit.xml.dist`.

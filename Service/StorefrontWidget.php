@@ -49,21 +49,57 @@ class StorefrontWidget
     private $customerSessionFactory;
 
     /**
+     * @var PageFilter
+     */
+    private $pageFilter;
+
+    /**
      * @param ConfigProvider $configProvider
      * @param IpCheckerService $ipChecker
      * @param ReporterToken $reporterToken
      * @param SessionFactory $customerSessionFactory
+     * @param PageFilter $pageFilter
      */
     public function __construct(
         ConfigProvider $configProvider,
         IpCheckerService $ipChecker,
         ReporterToken $reporterToken,
-        SessionFactory $customerSessionFactory
+        SessionFactory $customerSessionFactory,
+        PageFilter $pageFilter
     ) {
         $this->configProvider = $configProvider;
         $this->ipChecker = $ipChecker;
         $this->reporterToken = $reporterToken;
         $this->customerSessionFactory = $customerSessionFactory;
+        $this->pageFilter = $pageFilter;
+    }
+
+    /**
+     * Is the widget kept off this page (checkout and payment pages, plus the "Also Hide on Pages" list)
+     *
+     * Depends only on the page and store settings, so it is safe in the full page cache.
+     *
+     * @param string $fullActionName
+     * @return bool
+     */
+    public function isHiddenOn(string $fullActionName): bool
+    {
+        return $this->pageFilter->isHidden($fullActionName, $this->getHiddenPageRules());
+    }
+
+    /**
+     * Rules for the pages the storefront widget is kept off
+     *
+     * @return string[]
+     */
+    private function getHiddenPageRules(): array
+    {
+        $rules = $this->pageFilter->parseList($this->configProvider->getFrontendHiddenPages());
+        if ($this->configProvider->isFrontendHiddenOnCheckout()) {
+            $rules = array_merge(PageFilter::CHECKOUT_PAGES, $rules);
+        }
+
+        return $rules;
     }
 
     /**

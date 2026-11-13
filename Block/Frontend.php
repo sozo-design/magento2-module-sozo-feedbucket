@@ -79,6 +79,12 @@ class Frontend extends Template
      */
     protected function _toHtml(): string
     {
-        return $this->storefrontWidget->isActive() ? parent::_toHtml() : '';
+        if (!$this->storefrontWidget->isActive()
+            || $this->storefrontWidget->isHiddenOn((string)$this->getRequest()->getFullActionName())
+        ) {
+            return '';
+        }
+
+        return parent::_toHtml();
     }
 }

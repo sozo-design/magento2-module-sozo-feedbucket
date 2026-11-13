@@ -25,6 +25,8 @@
             <frontend>
                 <enabled>0</enabled>
                 <capture_user_data>0</capture_user_data>
+                <hide_on_checkout>1</hide_on_checkout>
+                <hidden_pages></hidden_pages>
             </frontend>
             <backend>
                 <enabled>0</enabled>
