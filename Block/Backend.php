@@ -87,15 +87,9 @@ class Backend extends Display
 
     /**
      * @inheritdoc
-     *
-     * @return string
      */
-    public function _toHtml(): string
+    protected function canShow(): bool
     {
-        if ($this->configProvider->isBackendEnabled()) {
-            return parent::_toHtml();
-        }
-
-        return '';
+        return $this->configProvider->isBackendEnabled() && parent::canShow();
     }
 }

@@ -120,10 +120,18 @@ class Display extends Template
      */
     public function _toHtml(): string
     {
-        if (!$this->configProvider->isEnabled() || $this->getSecret() === '') {
-            return '';
-        }
+        return $this->canShow() ? parent::_toHtml() : '';
+    }
 
-        return $this->ipChecker->checkAllowed() ? parent::_toHtml() : '';
+    /**
+     * Should the widget be output for this request
+     *
+     * @return bool
+     */
+    protected function canShow(): bool
+    {
+        return $this->configProvider->isEnabled()
+            && $this->getSecret() !== ''
+            && $this->ipChecker->checkAllowed();
     }
 }
