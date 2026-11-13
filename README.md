@@ -44,10 +44,10 @@ The IP whitelist checks the address Magento sees (`RemoteAddress`). Behind a pro
 
 ## Tests
 
-Unit tests for the IP whitelist matching are in `Test/Unit`. They have no Magento dependencies:
+Unit tests for the IP whitelist matching are in `Test/Unit`. They only need PHPUnit and `Service/IpMatcher.php`, so they run without Magento:
 
 ```bash
-vendor/bin/phpunit --bootstrap vendor/autoload.php Test/Unit
+phpunit --bootstrap Service/IpMatcher.php Test/Unit
 ```
 
 From a Magento project they also run with `dev/tests/unit/phpunit.xml.dist`.
